@@ -74,8 +74,44 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
       {/* 1. Hero Section */}
-      <section className="container" style={{ paddingTop: '2.5rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+      <section className="container" style={{ position: 'relative', paddingTop: '2.5rem' }}>
+        {/* Subtle Ambient Video Backdrop */}
+        <div 
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '-15px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '100vw',
+            maxWidth: '1360px',
+            height: '460px',
+            overflow: 'hidden',
+            pointerEvents: 'none',
+            zIndex: 0,
+            opacity: 0.14,
+            maskImage: 'radial-gradient(ellipse 65% 55% at 50% 30%, black 20%, transparent 80%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 65% 55% at 50% 30%, black 20%, transparent 80%)',
+          }}
+        >
+          <video
+            className="ambient-bg-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/images/hero-glass-cubes.webp"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          >
+            <source src="/videos/data-particles-loop.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', marginBottom: '2.5rem' }}>
           {/* Subtle Technical Pill */}
           <div 
             style={{ 

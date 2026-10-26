@@ -49,37 +49,37 @@ html.theme-light {
   --color-canvas: #f8fafc;
   --color-canvas-subtle: #f1f5f9;
   --color-surface: #ffffff;
-  --color-surface-hover: #f8fafc;
+  --color-surface-hover: #f1f5f9;
   --color-surface-elevated: #ffffff;
-  --color-border: #e2e8f0;
-  --color-border-subtle: #cbd5e1;
-  --color-border-focus: #059669;
+  --color-border: #cbd5e1;
+  --color-border-subtle: #e2e8f0;
+  --color-border-focus: #047857;
 
   --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --text-secondary: #334155;
   --text-muted: #64748b;
   --text-inverse: #ffffff;
 
   --mem-free: #0284c7;
-  --mem-free-bg: rgba(2, 132, 199, 0.08);
-  --mem-free-border: rgba(2, 132, 199, 0.35);
-  --mem-allocated: #059669;
-  --mem-allocated-bg: rgba(5, 150, 105, 0.1);
-  --mem-allocated-border: rgba(5, 150, 105, 0.4);
-  --mem-split: #d97706;
-  --mem-split-bg: rgba(217, 119, 6, 0.1);
-  --mem-coalesce: #9333ea;
-  --mem-fragmented: #d97706;
-  --mem-error: #e11d48;
-  --mem-error-bg: rgba(225, 29, 72, 0.08);
+  --mem-free-bg: rgba(2, 132, 199, 0.1);
+  --mem-free-border: rgba(2, 132, 199, 0.45);
+  --mem-allocated: #047857;
+  --mem-allocated-bg: rgba(4, 120, 87, 0.12);
+  --mem-allocated-border: rgba(4, 120, 87, 0.5);
+  --mem-split: #b45309;
+  --mem-split-bg: rgba(180, 83, 9, 0.12);
+  --mem-coalesce: #7e22ce;
+  --mem-fragmented: #b45309;
+  --mem-error: #be123c;
+  --mem-error-bg: rgba(190, 18, 60, 0.1);
 
-  --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
-  --shadow-glow-emerald: 0 0 16px rgba(5, 150, 105, 0.12);
-  --shadow-glow-cyan: 0 0 16px rgba(2, 132, 199, 0.12);
-  --glass-bg: rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 4px 18px -2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-glow-emerald: 0 0 18px rgba(4, 120, 87, 0.18);
+  --shadow-glow-cyan: 0 0 18px rgba(2, 132, 199, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(15, 23, 42, 0.12);
 
-  --grid-line: rgba(15, 23, 42, 0.03);
+  --grid-line: rgba(15, 23, 42, 0.045);
 }
 
 /* HeapLens Lab: Authentic Phosphor Cyber Instrument */
@@ -142,6 +142,32 @@ body {
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+html.theme-dark body {
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.08), transparent 70%),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
+    url('/images/dark-wireframe-grid.webp');
+  background-size: auto, 32px 32px, 32px 32px, 480px 480px;
+  background-repeat: no-repeat, repeat, repeat, repeat;
+}
+
+html.theme-light body {
+  background-image: 
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(4, 120, 87, 0.04), transparent 60%),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
+    url('/images/light-technical-grid.webp');
+  background-size: auto, 32px 32px, 32px 32px, 400px 400px;
+  background-repeat: no-repeat, repeat, repeat, repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-bg-video {
+    display: none !important;
+  }
 }
 
 code, pre, .font-mono {

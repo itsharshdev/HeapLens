@@ -22,6 +22,11 @@ interface StoryStep {
   badgeColor: string;
   description: string;
   codeSnippet: string;
+  illustration?: {
+    src: string;
+    alt: string;
+    caption: string;
+  };
   diagram: {
     before: { label: string; size: number; isFree: boolean; id?: number }[];
     after: { label: string; size: number; isFree: boolean; id?: number }[];
@@ -68,6 +73,11 @@ while (curr != nullptr) {
     badge: 'O(1) Node Insertion',
     badgeColor: 'var(--mem-allocated)',
     description: 'If the selected free block is larger than requested, the allocator carves out the exact requested size. A remainder free block is instantiated and spliced directly into the linked list after the allocated block.',
+    illustration: {
+      src: '/images/glass-prism.png',
+      alt: 'Refractive Block Splitting',
+      caption: 'Refractive Node Splitting — Large free block segmented cleanly into exact payload and linked remainder node.',
+    },
     codeSnippet: `// Split Block into Allocated + Free Remainder
 size_t remainder = curr->size - requestedSize;
 curr->size = requestedSize;
@@ -131,6 +141,11 @@ curr->allocId = 0; // Cleared`,
     badge: 'O(1) Pointer Redirection',
     badgeColor: '#a855f7',
     description: 'To prevent heap fragmentation from accumulating over time, a single-pass sweep unifies adjacent free blocks. The right node is absorbed into the left node and its metadata node is safely deleted.',
+    illustration: {
+      src: '/images/hero-glass-cubes.webp',
+      alt: 'Block Coalescing Fusion',
+      caption: 'Contiguous Boundary Dissolution — Adjacent free blocks fuse into a single unbroken contiguous pool.',
+    },
     codeSnippet: `// Single-Pass Adjacent Coalescing
 Block* curr = m_head;
 while (curr && curr->next) {
@@ -390,6 +405,42 @@ export const AllocatorStoryline: React.FC = () => {
           >
             <code>{currentStep.codeSnippet}</code>
           </pre>
+
+          {currentStep.illustration && (
+            <div 
+              style={{
+                marginTop: '0.875rem',
+                padding: '0.75rem',
+                background: 'var(--color-canvas)',
+                borderRadius: '0.375rem',
+                border: '1px solid var(--color-border)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.85rem',
+              }}
+            >
+              <img 
+                src={currentStep.illustration.src} 
+                alt={currentStep.illustration.alt} 
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'cover',
+                  borderRadius: '0.25rem',
+                  border: '1px solid var(--color-border)',
+                  flexShrink: 0,
+                }} 
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                <span style={{ fontSize: '0.6875rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)', fontWeight: 600 }}>
+                  ✦ PHYSICAL SCHEMATIC
+                </span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                  {currentStep.illustration.caption}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
