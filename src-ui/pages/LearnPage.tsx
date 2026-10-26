@@ -11,6 +11,7 @@ import {
   Merge, 
   AlertTriangle 
 } from 'lucide-react';
+import { StrategyComparator } from '../components/StrategyComparator';
 
 interface ConceptQuestion {
   question: string;
@@ -154,6 +155,9 @@ export const LearnPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Allocation Strategy Comparison Model */}
+      <StrategyComparator />
 
       {/* Technical Q&A Accordion */}
       <div>

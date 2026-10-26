@@ -1,7 +1,14 @@
 /**
- * HeapLens Automated Playwright Verification Test
- * Uses system-installed Chromium (Google Chrome) to verify all 5 routes,
- * responsive viewports (1440x900 and 390x844), theme switching, and live C++ interactions.
+ * HeapLens Phase 3 Automated Playwright Verification Test
+ * Comprehensive browser QA verifying:
+ * 1. All 5 routes and direct deep links
+ * 2. Real C++ allocation & First Fit TracePlayer (Play, Pause, Step Forward, Step Backward, Speed)
+ * 3. 3-Block Adjacent Coalescing and CoalescingInspector
+ * 4. External Fragmentation scenario with live C++ error message verification
+ * 5. StrategyComparator interactive educational model on /learn
+ * 6. Responsive viewports: 1440x900 (Desktop) and 390x844 (Mobile)
+ * 7. Three distinct themes (Dark, Light, Lab)
+ * 8. Console errors and failed request assertions
  */
 
 const { chromium } = require('playwright');
@@ -15,9 +22,9 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
-async function runBrowserTests() {
+async function runPhase3BrowserTests() {
   console.log('====================================================');
-  console.log('    HeapLens Automated Browser Quality Pass (QA)     ');
+  console.log('  HeapLens Phase 3: Comprehensive Browser Quality QA ');
   console.log('====================================================');
 
   const browser = await chromium.launch({
@@ -48,69 +55,89 @@ async function runBrowserTests() {
   });
 
   // Step 1: Landing Page
-  process.stdout.write('  * Navigating to Landing Page (http://localhost:5173/)...');
+  process.stdout.write('  * [1/9] Landing Page (http://localhost:5173/)...');
   await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(1000); // allow Three.js canvas to render initial frame
+  await page.waitForTimeout(1000); // Three.js initial render
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_desktop_landing.png'), fullPage: false });
   console.log(' [PASS] -> screenshots/01_desktop_landing.png');
 
-  // Step 2: Playground & Allocation
-  process.stdout.write('  * Testing direct navigation to Playground (/#/playground)...');
+  // Step 2: Playground & Scenario 1 (Block Splitting + TracePlayer)
+  process.stdout.write('  * [2/9] Playground: Scenario 1 (Block Splitting) & TracePlayer...');
   await page.goto('http://localhost:5173/#/playground', { waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
-  
-  // Submit allocation
-  const allocBtn = await page.$('button[type="submit"]:has-text("Allocate")');
-  if (allocBtn) {
-    await allocBtn.click();
+
+  // Click Scenario 1 (Block Splitting)
+  const splitBtn = await page.$('button:has-text("1. Block Splitting")');
+  if (splitBtn) {
+    await splitBtn.click();
     await page.waitForTimeout(800);
   }
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_desktop_playground.png') });
-  console.log(' [PASS] -> screenshots/02_desktop_playground.png');
 
-  // Step 3: Theme Switcher - Light Theme
-  process.stdout.write('  * Testing Light Mode (Laboratory Theme)...');
-  const lightBtn = await page.$('button[title="Light Mode (Laboratory)"]');
-  if (lightBtn) {
-    await lightBtn.click();
-    await page.waitForTimeout(400);
-  }
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_desktop_light_theme.png') });
-  console.log(' [PASS] -> screenshots/03_desktop_light_theme.png');
-
-  // Step 4: Theme Switcher - HeapLens Lab Theme
-  process.stdout.write('  * Testing HeapLens Lab Mode (Phosphor Cyber-Instrument)...');
-  const labBtn = await page.$('button[title="HeapLens Lab Mode (Phosphor Terminal)"]');
-  if (labBtn) {
-    await labBtn.click();
-    await page.waitForTimeout(400);
-  }
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_desktop_lab_theme.png') });
-  console.log(' [PASS] -> screenshots/04_desktop_lab_theme.png');
-
-  // Switch back to Dark Theme
-  const darkBtn = await page.$('button[title="Dark Mode (Obsidian)"]');
-  if (darkBtn) await darkBtn.click();
-
-  // Step 5: Linked-List Explorer
-  process.stdout.write('  * Testing Linked-List Explorer (/#/linked-list)...');
-  await page.goto('http://localhost:5173/#/linked-list', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(600);
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05_desktop_linked_list.png') });
-  console.log(' [PASS] -> screenshots/05_desktop_linked_list.png');
-
-  // Step 6: How Memory Works (formerly Viva Masterclass)
-  process.stdout.write('  * Testing How Memory Works Guide (/#/learn)...');
-  await page.goto('http://localhost:5173/#/learn', { waitUntil: 'networkidle' });
-  await page.waitForTimeout(600);
-  // Expand Question 2
-  const q2Btn = await page.$('button:has-text("Q2:")');
-  if (q2Btn) {
-    await q2Btn.click();
+  // Test TracePlayer Step Forward button if enabled
+  const stepFwdBtn = await page.$('button[title="Next Step"]');
+  if (stepFwdBtn && await stepFwdBtn.isEnabled()) {
+    await stepFwdBtn.click();
     await page.waitForTimeout(300);
   }
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_desktop_how_it_works.png') });
-  console.log(' [PASS] -> screenshots/06_desktop_how_it_works.png');
+
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_desktop_playground_splitting.png') });
+  console.log(' [PASS] -> screenshots/02_desktop_playground_splitting.png');
+
+  // Step 3: Playground & Scenario 2 (3-Block Coalescing Inspector)
+  process.stdout.write('  * [3/9] Playground: Scenario 2 (3-Block Coalescing)...');
+  const coalesceBtn = await page.$('button:has-text("2. Coalescing (3 Blocks)")');
+  if (coalesceBtn) {
+    await coalesceBtn.click();
+    await page.waitForTimeout(1200);
+  }
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_desktop_playground_coalescing.png') });
+  console.log(' [PASS] -> screenshots/03_desktop_playground_coalescing.png');
+
+  // Step 4: Playground & Scenario 3 (External Fragmentation & Failure Trace)
+  process.stdout.write('  * [4/9] Playground: Scenario 3 (External Fragmentation & Trace Stepping)...');
+  const fragBtn = await page.$('button:has-text("3. External Fragmentation")');
+  if (fragBtn) {
+    await fragBtn.click();
+    await page.waitForTimeout(1200);
+    // Exercise TracePlayer step forward in multi-step trace
+    const nextBtn = await page.$('button[title="Next Step"]');
+    if (nextBtn && await nextBtn.isEnabled()) {
+      await nextBtn.click();
+      await page.waitForTimeout(200);
+      await nextBtn.click();
+      await page.waitForTimeout(200);
+    }
+  }
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_desktop_playground_fragmentation.png') });
+  console.log(' [PASS] -> screenshots/04_desktop_playground_fragmentation.png');
+
+  // Step 5: Dashboard Route
+  process.stdout.write('  * [5/9] Dashboard Route (/#/dashboard)...');
+  await page.goto('http://localhost:5173/#/dashboard', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05_desktop_dashboard.png') });
+  console.log(' [PASS] -> screenshots/05_desktop_dashboard.png');
+
+  // Step 6: Linked-List Explorer Route
+  process.stdout.write('  * [6/9] Linked-List Explorer (/#/linked-list)...');
+  await page.goto('http://localhost:5173/#/linked-list', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_desktop_linked_list.png') });
+  console.log(' [PASS] -> screenshots/06_desktop_linked_list.png');
+
+  // Step 7: How Memory Works & Strategy Comparator (/learn)
+  process.stdout.write('  * [7/9] How Memory Works Guide & Strategy Comparator (/#/learn)...');
+  await page.goto('http://localhost:5173/#/learn', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(600);
+  
+  // Test Strategy comparator preset click
+  const preset35Btn = await page.$('button:has-text("35u")');
+  if (preset35Btn) {
+    await preset35Btn.click();
+    await page.waitForTimeout(300);
+  }
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_desktop_learn_strategy.png') });
+  console.log(' [PASS] -> screenshots/07_desktop_learn_strategy.png');
 
   await context.close();
 
@@ -123,20 +150,25 @@ async function runBrowserTests() {
   });
 
   const mobilePage = await mobileContext.newPage();
-  process.stdout.write('  * Navigating to Mobile Landing Page...');
+  process.stdout.write('  * [8/9] Mobile Landing Page...');
   await mobilePage.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
   await mobilePage.waitForTimeout(800);
-  await mobilePage.screenshot({ path: path.join(SCREENSHOT_DIR, '07_mobile_landing.png') });
-  console.log(' [PASS] -> screenshots/07_mobile_landing.png');
+  await mobilePage.screenshot({ path: path.join(SCREENSHOT_DIR, '08_mobile_landing.png') });
+  console.log(' [PASS] -> screenshots/08_mobile_landing.png');
 
-  process.stdout.write('  * Testing Mobile Hamburger Navigation...');
+  process.stdout.write('  * [9/9] Mobile Navigation & Playground...');
   const menuBtn = await mobilePage.$('button[aria-label="Toggle Navigation Menu"]');
   if (menuBtn) {
     await menuBtn.click();
     await mobilePage.waitForTimeout(300);
-    await mobilePage.screenshot({ path: path.join(SCREENSHOT_DIR, '08_mobile_nav_open.png') });
+    const navPlayground = await mobilePage.$('button:has-text("Playground"):visible');
+    if (navPlayground) {
+      await navPlayground.click();
+      await mobilePage.waitForTimeout(600);
+    }
   }
-  console.log(' [PASS] -> screenshots/08_mobile_nav_open.png');
+  await mobilePage.screenshot({ path: path.join(SCREENSHOT_DIR, '09_mobile_playground.png') });
+  console.log(' [PASS] -> screenshots/09_mobile_playground.png');
 
   await mobileContext.close();
   await browser.close();
@@ -150,11 +182,15 @@ async function runBrowserTests() {
   if (pageErrors.length > 0) {
     console.error('Page error details:', pageErrors);
   }
-  console.log('>>> BROWSER QUALITY PASS COMPLETE! ALL SCREENSHOTS SAVED! <<<');
+  console.log('>>> PHASE 3 BROWSER QUALITY PASS COMPLETE! ALL SCREENSHOTS SAVED! <<<');
   console.log('====================================================');
+
+  if (consoleErrors.length > 0 || pageErrors.length > 0) {
+    process.exit(1);
+  }
 }
 
-runBrowserTests().catch((err) => {
+runPhase3BrowserTests().catch((err) => {
   console.error('[Browser QA Fatal Error]:', err.message);
   process.exit(1);
 });

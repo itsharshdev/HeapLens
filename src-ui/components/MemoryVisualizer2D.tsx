@@ -5,7 +5,7 @@ import { Layers, Info, CheckCircle2, ShieldAlert } from 'lucide-react';
 interface MemoryVisualizer2DProps {
   blocks: Block[];
   stats: Stats;
-  highlightOffset?: number;
+  highlightOffset?: number | null;
   onSelectBlock?: (block: Block) => void;
 }
 
@@ -89,7 +89,7 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
       >
         {blocks.map((block, index) => {
           const widthPercent = (block.size / totalPoolSize) * 100;
-          const isHighlighted = highlightOffset !== undefined && highlightOffset === block.startOffset;
+          const isHighlighted = highlightOffset != null && highlightOffset === block.startOffset;
           const isSelected = hoveredBlock?.startOffset === block.startOffset;
 
           return (
@@ -111,10 +111,11 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
                 padding: '0.2rem',
                 borderRight: index < blocks.length - 1 ? '1px solid var(--color-border)' : 'none',
                 background: block.isFree ? 'var(--mem-free-bg)' : 'var(--mem-allocated-bg)',
-                transition: 'all 0.12s ease',
+                transition: 'all 0.15s ease',
                 outline: isHighlighted ? '2px solid var(--mem-split)' : isSelected ? '2px solid var(--text-primary)' : 'none',
+                boxShadow: isHighlighted ? 'inset 0 0 12px rgba(245, 158, 11, 0.4), 0 0 12px rgba(245, 158, 11, 0.3)' : 'none',
                 outlineOffset: '-2px',
-                zIndex: isSelected ? 10 : 1,
+                zIndex: isHighlighted || isSelected ? 10 : 1,
               }}
             >
               {/* Block Indicator Icon / State */}

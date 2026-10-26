@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { EngineState, StepTrace, CoalesceEvent } from '../types';
 import { MemoryVisualizer2D } from '../components/MemoryVisualizer2D';
-import { TraversalTrace } from '../components/TraversalTrace';
+import { MemoryScene3D } from '../components/MemoryScene3D';
+import { TracePlayer } from '../components/TracePlayer';
+import { CoalescingInspector } from '../components/CoalescingInspector';
 import { 
   Play, 
   Trash2, 
@@ -11,7 +13,9 @@ import {
   CheckCircle2, 
   Scissors, 
   Merge,
-  HelpCircle
+  Box,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -32,23 +36,30 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
   const [freeId, setFreeId] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [latestTrace, setLatestTrace] = useState<StepTrace[]>([]);
+  const [activeHighlightOffset, setActiveHighlightOffset] = useState<number | null>(null);
+  const [latestCoalesceEvents, setLatestCoalesceEvents] = useState<CoalesceEvent[]>([]);
+  const [lastFreedId, setLastFreedId] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'both' | '2d' | '3d'>('both');
   const [lastMessage, setLastMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
   const handleAllocateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (allocSize <= 0) {
-      setLastMessage({ type: 'error', text: 'Size must be greater than zero.' });
+      setLastMessage({ type: 'error', text: 'Allocation size must be greater than zero.' });
       return;
     }
     setIsLoading(true);
     try {
       const res = await onAllocate(allocSize);
       if (res.success) {
-        setLastMessage({ type: 'success', text: `Successfully allocated ${allocSize} units using First Fit!` });
+        setLastMessage({ 
+          type: 'success', 
+          text: `Successfully allocated ${allocSize} units using First Fit! Use the Trace Player below to inspect the decision steps.` 
+        });
         if (res.trace) setLatestTrace(res.trace);
-        confetti({ particleCount: 25, spread: 55, origin: { y: 0.8 } });
+        confetti({ particleCount: 28, spread: 60, origin: { y: 0.82 } });
       } else {
-        setLastMessage({ type: 'error', text: res.errorMessage || 'Allocation failed.' });
+        setLastMessage({ type: 'error', text: res.errorMessage || 'Allocation request failed.' });
         if (res.trace) setLatestTrace(res.trace);
       }
     } catch (err: any) {
@@ -68,10 +79,12 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
     try {
       const res = await onFree(freeId);
       if (res.success) {
+        setLastFreedId(freeId);
+        setLatestCoalesceEvents(res.coalesceEvents || []);
         const merges = res.coalesceEvents?.length || 0;
         setLastMessage({ 
           type: 'success', 
-          text: `Freed Allocation ID #${freeId}.${merges > 0 ? ` Coalesced ${merges} adjacent free block(s)!` : ''}` 
+          text: `Freed Allocation ID #${freeId}.${merges > 0 ? ` Coalesced ${merges} adjacent free block(s)! See inspector below.` : ' Block marked free.'}` 
         });
       } else {
         setLastMessage({ type: 'error', text: res.errorMessage || 'Deallocation failed.' });
@@ -86,13 +99,15 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
   // Educational Preset Scenarios
   const runScenarioSplit = async () => {
     setIsLoading(true);
+    setLatestCoalesceEvents([]);
+    setLastFreedId(null);
     try {
       await onReset(100);
       const res = await onAllocate(35);
       if (res.trace) setLatestTrace(res.trace);
       setLastMessage({ 
         type: 'info', 
-        text: 'Scenario Loaded: Allocated 35 units from 100u pool. Block split into 35u (Allocated) and 65u (Free Remainder).' 
+        text: 'Scenario 1 Loaded: Allocated 35u from a clean 100u pool. Block split into 35u (Allocated @ 0x00) and 65u (Free Remainder @ 0x23).' 
       });
     } finally {
       setIsLoading(false);
@@ -103,17 +118,28 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
     setIsLoading(true);
     try {
       await onReset(100);
+      // Allocate 5 blocks of 20
       await onAllocate(20); // ID 1
-      await onAllocate(30); // ID 2
-      await onAllocate(50); // ID 3
-      // Free ID 1 and ID 3, leaving ID 2 in the middle
-      await onFree(1);
-      await onFree(3);
+      await onAllocate(20); // ID 2
+      await onAllocate(20); // ID 3
+      await onAllocate(20); // ID 4
+      await onAllocate(20); // ID 5
+      
+      // Free ID 2 and ID 4, leaving ID 3 flanked by two free blocks
+      await onFree(2);
+      await onFree(4);
+
+      // Now free ID 3 to trigger true 3-block coalescing!
+      const freeRes = await onFree(3);
+      setLastFreedId(3);
+      if (freeRes.coalesceEvents) {
+        setLatestCoalesceEvents(freeRes.coalesceEvents);
+      }
+
       setLastMessage({ 
         type: 'info', 
-        text: 'Scenario Loaded: 3 blocks created; outer blocks freed. Now click "Free #2" below to observe 3-block coalescing into 1 contiguous pool!' 
+        text: 'Scenario 2 Executed: Allocated 5 blocks, freed #2 and #4, then freed middle block #3. C++ engine executed 3-Block Adjacent Coalescing into one contiguous 60u free block!' 
       });
-      setFreeId(2);
     } finally {
       setIsLoading(false);
     }
@@ -121,22 +147,28 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
 
   const runScenarioFragmentation = async () => {
     setIsLoading(true);
+    setLatestCoalesceEvents([]);
+    setLastFreedId(null);
     try {
       await onReset(100);
-      // Allocate 4 blocks of 25
-      await onAllocate(25); // ID 1
-      await onAllocate(25); // ID 2
-      await onAllocate(25); // ID 3
-      await onAllocate(25); // ID 4
-      // Free ID 1 and ID 3
-      await onFree(1);
-      await onFree(3);
-      // Attempt to allocate 40 (fails even though 50 total free)
-      const res = await onAllocate(40);
+      // Allocate 4 blocks: 30, 20, 30, 20
+      await onAllocate(30); // ID 1
+      await onAllocate(20); // ID 2
+      await onAllocate(30); // ID 3
+      await onAllocate(20); // ID 4
+      
+      // Free the two 20-unit blocks (IDs 2 and 4)
+      await onFree(2);
+      await onFree(4);
+
+      // Total free = 40 units, but largest contiguous free block = 20 units!
+      // Attempt to allocate 35 units:
+      const res = await onAllocate(35);
       if (res.trace) setLatestTrace(res.trace);
+
       setLastMessage({ 
         type: 'error', 
-        text: 'External Fragmentation Demonstrated: Total free space is 50 units, but largest contiguous block is only 25 units. Request for 40 units failed!' 
+        text: 'External Fragmentation Demonstrated: Total free space is 40 units, but largest contiguous block is only 20 units. C++ engine rejected 35u request!' 
       });
     } finally {
       setIsLoading(false);
@@ -148,13 +180,46 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
   return (
     <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingTop: '1.5rem' }}>
       {/* Page Header */}
-      <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
-          Memory Allocation Playground
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-          Interact directly with the C++ dynamic memory allocator. Submit real allocation and deallocation requests.
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+            Memory Allocation Playground
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+            Interact directly with the C++ dynamic memory allocator. Submit real allocation and deallocation requests.
+          </p>
+        </div>
+
+        {/* View Mode Toggle */}
+        <div style={{ display: 'flex', gap: '0.35rem', background: 'var(--color-surface)', padding: '0.25rem', borderRadius: '0.375rem', border: '1px solid var(--color-border)' }}>
+          <button
+            type="button"
+            onClick={() => setViewMode('both')}
+            className={`btn ${viewMode === 'both' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ padding: '0.25rem 0.55rem', fontSize: '0.6875rem' }}
+          >
+            <Sparkles size={12} />
+            <span>Dual View</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('2d')}
+            className={`btn ${viewMode === '2d' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ padding: '0.25rem 0.55rem', fontSize: '0.6875rem' }}
+          >
+            <Layers size={12} />
+            <span>2D Map</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('3d')}
+            className={`btn ${viewMode === '3d' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ padding: '0.25rem 0.55rem', fontSize: '0.6875rem' }}
+          >
+            <Box size={12} />
+            <span>3D Arena</span>
+          </button>
+        </div>
       </div>
 
       {/* Preset Scenarios Toolbar */}
@@ -172,7 +237,7 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Zap size={16} style={{ color: 'var(--mem-split)' }} />
           <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Interactive Scenarios:
+            Interactive Guided Scenarios:
           </span>
         </div>
 
@@ -345,17 +410,42 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
             </div>
 
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Deallocating automatically triggers adjacent free block coalescing.
+              Deallocating automatically triggers adjacent free block coalescing in O(1) space.
             </p>
           </form>
         </div>
       </div>
 
-      {/* Memory Visualizer 2D */}
-      <MemoryVisualizer2D blocks={engineState.blocks} stats={engineState.stats} />
+      {/* Visualizers (2D & 3D) synchronized with activeHighlightOffset */}
+      {(viewMode === 'both' || viewMode === '3d') && (
+        <MemoryScene3D 
+          blocks={engineState.blocks} 
+          stats={engineState.stats} 
+          height={320}
+          highlightOffset={activeHighlightOffset}
+        />
+      )}
 
-      {/* Step-by-Step Traversal Trace */}
-      <TraversalTrace trace={latestTrace} requestedSize={allocSize} />
+      {(viewMode === 'both' || viewMode === '2d') && (
+        <MemoryVisualizer2D 
+          blocks={engineState.blocks} 
+          stats={engineState.stats}
+          highlightOffset={activeHighlightOffset}
+        />
+      )}
+
+      {/* Interactive First Fit Trace Player */}
+      <TracePlayer 
+        trace={latestTrace} 
+        requestedSize={allocSize}
+        onActiveOffsetChange={(offset) => setActiveHighlightOffset(offset)}
+      />
+
+      {/* Deallocation & Coalescing Inspector */}
+      <CoalescingInspector 
+        freedId={lastFreedId} 
+        events={latestCoalesceEvents} 
+      />
     </div>
   );
 };
