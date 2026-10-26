@@ -9,6 +9,7 @@
     "build": "npm run build:cpp && npm run build:test && vite build",
     "test:cpp": ".\\build\\test_allocator.exe",
     "test:integration": "node tests/test_integration.js",
+    "test:browser": "node tests/test_browser.js",
     "test": "npm run build:cpp && npm run build:test && npm run test:cpp && npm run test:integration",
     "start": "node bridge/server.js",
     "dev": "vite",
@@ -16,18 +17,19 @@
     "repl": ".\\build\\heaplens_engine.exe --interactive"
   },
   "dependencies": {
+    "canvas-confetti": "^1.9.2",
+    "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "three": "^0.160.0",
-    "lucide-react": "^0.344.0",
-    "canvas-confetti": "^1.9.2"
+    "three": "^0.160.0"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/three": "^0.160.0",
-    "@types/canvas-confetti": "^1.9.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "playwright": "^1.64.1",
     "typescript": "^5.5.4",
     "vite": "^5.4.2"
   },

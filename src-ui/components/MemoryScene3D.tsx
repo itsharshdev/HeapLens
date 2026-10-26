@@ -12,7 +12,7 @@ interface MemoryScene3DProps {
 export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
   blocks,
   stats,
-  height = 340,
+  height = 360,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [hoveredInfo, setHoveredInfo] = useState<Block | null>(null);
@@ -31,7 +31,7 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
     // Check WebGL availability
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setSize(width, sceneHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
@@ -43,75 +43,76 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
       return;
     }
 
-    // Scene and Camera
+    // Scene & Isometric Perspective Camera
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / sceneHeight, 0.1, 1000);
-    camera.position.set(0, 32, 58);
-    camera.lookAt(0, 0, 0);
+    const camera = new THREE.PerspectiveCamera(38, width / sceneHeight, 0.1, 1000);
+    camera.position.set(0, 28, 54);
+    camera.lookAt(0, 1.5, 0);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+    // Subtle Technical Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    dirLight.position.set(20, 45, 30);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    dirLight.position.set(15, 40, 25);
     dirLight.castShadow = true;
     scene.add(dirLight);
 
-    const cyanPoint = new THREE.PointLight(0x06b6d4, 1.2, 50);
-    cyanPoint.position.set(-20, 10, 10);
-    scene.add(cyanPoint);
+    const cyanLight = new THREE.PointLight(0x06b6d4, 1.1, 45);
+    cyanLight.position.set(-22, 12, 15);
+    scene.add(cyanLight);
 
-    const emeraldPoint = new THREE.PointLight(0x10b981, 1.5, 50);
-    emeraldPoint.position.set(20, 10, 10);
-    scene.add(emeraldPoint);
+    const emeraldLight = new THREE.PointLight(0x10b981, 1.4, 45);
+    emeraldLight.position.set(22, 12, 15);
+    scene.add(emeraldLight);
 
-    // Group for all blocks
+    // Memory Bus Group
     const memoryGroup = new THREE.Group();
     scene.add(memoryGroup);
 
     // Build 3D Memory Blocks
     const totalPoolSize = stats.totalPoolSize || 100;
-    const totalVisualWidth = 50; // total 3D scene length
+    const totalVisualWidth = 46;
     const startX = -totalVisualWidth / 2;
 
     const meshes: THREE.Mesh[] = [];
-    const blockDataMap = new Map<THREE.Mesh, Block>();
+    const blockDataMap = new Map<THREE.Mesh, { block: Block; basePosition: THREE.Vector3 }>();
 
     blocks.forEach((block) => {
       const blockWidth = (block.size / totalPoolSize) * totalVisualWidth;
       const blockX = startX + ((block.startOffset + block.size / 2) / totalPoolSize) * totalVisualWidth;
 
-      const geometry = new THREE.BoxGeometry(blockWidth * 0.94, 5, 8);
+      const geometry = new THREE.BoxGeometry(blockWidth * 0.93, 4.5, 7.5);
 
       let material: THREE.Material;
       if (block.isFree) {
         material = new THREE.MeshPhysicalMaterial({
           color: 0x06b6d4,
           transparent: true,
-          opacity: 0.6,
-          roughness: 0.2,
-          transmission: 0.4,
-          thickness: 0.5,
+          opacity: 0.55,
+          roughness: 0.25,
+          transmission: 0.35,
+          thickness: 0.4,
           emissive: 0x06b6d4,
-          emissiveIntensity: 0.1,
+          emissiveIntensity: 0.08,
         });
       } else {
         material = new THREE.MeshStandardMaterial({
           color: 0x10b981,
           roughness: 0.3,
-          metalness: 0.15,
+          metalness: 0.12,
           emissive: 0x10b981,
-          emissiveIntensity: 0.25,
+          emissiveIntensity: 0.2,
         });
       }
 
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(blockX, 2.5, 0);
+      const basePos = new THREE.Vector3(blockX, 2.25, 0);
+      mesh.position.copy(basePos);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
 
-      // Add edge lines for high-precision technical look
+      // Add high-contrast edge bevel wireframe
       const edges = new THREE.EdgesGeometry(geometry);
       const lineMaterial = new THREE.LineBasicMaterial({
         color: block.isFree ? 0x38bdf8 : 0x34d399,
@@ -122,17 +123,18 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
 
       memoryGroup.add(mesh);
       meshes.push(mesh);
-      blockDataMap.set(mesh, block);
+      blockDataMap.set(mesh, { block, basePosition: basePos });
     });
 
-    // Substrate Grid Floor
-    const gridHelper = new THREE.GridHelper(totalVisualWidth + 12, 20, 0x1e293b, 0x0f172a);
-    gridHelper.position.y = -0.1;
+    // Substrate Floor Grid
+    const gridHelper = new THREE.GridHelper(totalVisualWidth + 14, 22, 0x1a263e, 0x0f1624);
+    gridHelper.position.y = -0.05;
     scene.add(gridHelper);
 
     // Mouse Interaction & Raycasting
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    let currentHoveredMesh: THREE.Mesh | null = null;
 
     const handleMouseMove = (event: MouseEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
@@ -144,18 +146,20 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
 
       if (intersects.length > 0) {
         const hitMesh = intersects[0].object as THREE.Mesh;
-        const block = blockDataMap.get(hitMesh);
-        if (block) {
-          setHoveredInfo(block);
+        currentHoveredMesh = hitMesh;
+        const entry = blockDataMap.get(hitMesh);
+        if (entry) {
+          setHoveredInfo(entry.block);
         }
       } else {
+        currentHoveredMesh = null;
         setHoveredInfo(null);
       }
     };
 
     renderer.domElement.addEventListener('mousemove', handleMouseMove);
 
-    // Animation Loop
+    // Animation Loop with Tactile Hover Lift
     let animationFrameId: number;
     let clock = new THREE.Clock();
 
@@ -163,9 +167,19 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
       animationFrameId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
 
+      // Subtle rotational sway
       if (isRotating) {
-        memoryGroup.rotation.y = Math.sin(clock.getElapsedTime() * 0.45) * 0.12;
+        memoryGroup.rotation.y = Math.sin(clock.getElapsedTime() * 0.35) * 0.08;
       }
+
+      // Smoothly interpolate hover elevation on blocks
+      meshes.forEach((mesh) => {
+        const entry = blockDataMap.get(mesh);
+        if (entry) {
+          const targetY = (mesh === currentHoveredMesh) ? entry.basePosition.y + 0.8 : entry.basePosition.y;
+          mesh.position.y += (targetY - mesh.position.y) * 0.15;
+        }
+      });
 
       renderer.render(scene, camera);
     };
@@ -209,7 +223,7 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
   if (fallback2D) {
     return (
       <div 
-        className="glass-panel" 
+        className="instrument-card" 
         style={{
           padding: '2rem',
           textAlign: 'center',
@@ -220,16 +234,16 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
           gap: '0.75rem'
         }}
       >
-        <Sparkles size={28} style={{ color: 'var(--mem-allocated)' }} />
-        <h4 style={{ color: 'var(--text-primary)', fontSize: '1.125rem', fontWeight: 600 }}>
-          3D Interactive Visualizer Mode
+        <Sparkles size={24} style={{ color: 'var(--mem-allocated)' }} />
+        <h4 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 600 }}>
+          3D Interactive Mode (Paused)
         </h4>
-        <p style={{ maxWidth: '500px', fontSize: '0.875rem' }}>
-          3D rendering mode is currently in 2D fallback. The 2D proportional memory map below provides full interactive block inspection.
+        <p style={{ maxWidth: '480px', fontSize: '0.8125rem' }}>
+          3D canvas is currently paused. The 2D proportional memory map provides full interactive block inspection.
         </p>
         <button className="btn btn-secondary" onClick={() => setFallback2D(false)}>
-          <RotateCcw size={16} />
-          <span>Attempt 3D Scene Initialization</span>
+          <RotateCcw size={15} />
+          <span>Resume 3D Scene</span>
         </button>
       </div>
     );
@@ -237,13 +251,12 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
 
   return (
     <div 
-      className="glass-panel"
+      className="instrument-card"
       style={{
         position: 'relative',
         width: '100%',
         height: `${height}px`,
         overflow: 'hidden',
-        boxShadow: 'var(--shadow-card)',
       }}
     >
       {/* 3D Canvas Mounting Node */}
@@ -253,8 +266,8 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
       <div 
         style={{
           position: 'absolute',
-          top: '1rem',
-          right: '1rem',
+          top: '0.75rem',
+          right: '0.75rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
@@ -264,19 +277,19 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
         <button
           onClick={() => setIsRotating(!isRotating)}
           className="btn btn-secondary"
-          style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', background: 'var(--glass-bg)' }}
-          title={isRotating ? "Pause subtle drift" : "Resume subtle drift"}
+          style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem', background: 'var(--glass-bg)' }}
+          title={isRotating ? "Pause drift" : "Resume drift"}
         >
-          <RotateCcw size={13} />
-          <span>{isRotating ? 'Drift: On' : 'Drift: Paused'}</span>
+          <RotateCcw size={12} />
+          <span>{isRotating ? 'Drift: On' : 'Drift: Off'}</span>
         </button>
         <button
           onClick={() => setFallback2D(true)}
           className="btn btn-secondary"
-          style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', background: 'var(--glass-bg)' }}
+          style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem', background: 'var(--glass-bg)' }}
           title="Switch to 2D Mode"
         >
-          <Eye size={13} />
+          <Eye size={12} />
           <span>2D Mode</span>
         </button>
       </div>
@@ -284,45 +297,43 @@ export const MemoryScene3D: React.FC<MemoryScene3DProps> = ({
       {/* Hover Card Overlay */}
       {hoveredInfo && (
         <div 
-          className="glass-panel animate-fade-in"
+          className="glass-floating animate-fade-in"
           style={{
             position: 'absolute',
-            bottom: '1rem',
-            left: '1rem',
-            padding: '0.625rem 1rem',
+            bottom: '0.875rem',
+            left: '0.875rem',
+            padding: '0.5rem 0.875rem',
             zIndex: 10,
             display: 'flex',
             alignItems: 'center',
-            gap: '1rem',
-            background: 'var(--glass-bg)',
-            border: '1px solid var(--glass-border)',
+            gap: '0.875rem',
           }}
         >
           <span className={`badge ${hoveredInfo.isFree ? 'badge-free' : 'badge-allocated'}`}>
             {hoveredInfo.isFree ? 'FREE BLOCK' : `ALLOCATION #${hoveredInfo.allocId}`}
           </span>
-          <span style={{ fontSize: '0.8125rem', fontFamily: 'JetBrains Mono', color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono', color: 'var(--text-primary)' }}>
             Offset: 0x{hoveredInfo.startOffset.toString(16).toUpperCase().padStart(2, '0')} ({hoveredInfo.startOffset}u)
           </span>
-          <span style={{ fontSize: '0.8125rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
+          <span style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
             Size: {hoveredInfo.size} units
           </span>
         </div>
       )}
 
-      {/* Bottom Hint */}
+      {/* Address Scale Baseline Indicator */}
       <div 
         style={{
           position: 'absolute',
-          bottom: '0.75rem',
-          right: '1rem',
+          bottom: '0.625rem',
+          right: '0.875rem',
           fontSize: '0.6875rem',
           fontFamily: 'JetBrains Mono',
           color: 'var(--text-muted)',
           pointerEvents: 'none',
         }}
       >
-        ✦ Drag or move cursor to inspect memory blocks in 3D
+        ✦ Hover to elevate block • 0x00 to 0x{stats.totalPoolSize.toString(16).toUpperCase()}
       </div>
     </div>
   );

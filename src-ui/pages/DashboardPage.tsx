@@ -6,9 +6,7 @@ import {
   LayoutDashboard, 
   Trash2, 
   RefreshCw, 
-  CheckCircle2, 
   AlertCircle, 
-  Database,
   ArrowRight
 } from 'lucide-react';
 
@@ -60,7 +58,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             className="btn btn-secondary"
             title="Reset simulated memory pool"
           >
-            <RefreshCw size={15} />
+            <RefreshCw size={14} />
             <span>Reset Pool</span>
           </button>
           <button 
@@ -68,7 +66,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             className="btn btn-primary"
           >
             <span>Open Playground</span>
-            <ArrowRight size={15} />
+            <ArrowRight size={14} />
           </button>
         </div>
       </div>
@@ -76,19 +74,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       {/* Connection Banner if preview mode */}
       {!isEngineConnected && (
         <div 
-          className="glass-panel"
+          className="instrument-card"
           style={{
-            padding: '0.875rem 1.25rem',
+            padding: '0.75rem 1.125rem',
             borderLeft: '4px solid var(--mem-fragmented)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
           }}
         >
-          <AlertCircle size={18} style={{ color: 'var(--mem-fragmented)', flexShrink: 0 }} />
-          <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          <AlertCircle size={16} style={{ color: 'var(--mem-fragmented)', flexShrink: 0 }} />
+          <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
             <strong>C++ Engine Offline:</strong> Showing initial preview state. Start the bridge with{' '}
-            <code style={{ background: 'var(--color-surface)', padding: '2px 6px', borderRadius: '4px' }}>
+            <code style={{ background: 'var(--color-surface)', padding: '2px 5px', borderRadius: '3px' }}>
               npm start
             </code>{' '}
             to connect live operations.
@@ -103,66 +101,66 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       <MemoryVisualizer2D blocks={engineState.blocks} stats={engineState.stats} />
 
       {/* Active Allocations Table */}
-      <div className="glass-panel" style={{ padding: '1.25rem' }}>
+      <div className="instrument-card" style={{ padding: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text-primary)' }}>
               Active Allocations ({allocatedBlocks.length})
             </h3>
-            <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-              Blocks currently occupied in the simulated heap.
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Blocks currently occupied in the simulated heap arena.
             </p>
           </div>
         </div>
 
         {allocatedBlocks.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
             No active allocations. The memory pool is 100% free! Go to the Playground to allocate memory.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8125rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: 'var(--text-muted)' }}>
-                  <th style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono' }}>ALLOC ID</th>
-                  <th style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono' }}>START OFFSET</th>
-                  <th style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono' }}>SIZE (UNITS)</th>
-                  <th style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono' }}>RANGE</th>
-                  <th style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono' }}>HEAP %</th>
-                  <th style={{ padding: '0.75rem 0.5rem', textAlign: 'right' }}>ACTION</th>
+                  <th style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono' }}>ALLOC ID</th>
+                  <th style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono' }}>START OFFSET</th>
+                  <th style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono' }}>SIZE</th>
+                  <th style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono' }}>RANGE</th>
+                  <th style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono' }}>HEAP %</th>
+                  <th style={{ padding: '0.625rem 0.5rem', textAlign: 'right' }}>ACTION</th>
                 </tr>
               </thead>
               <tbody>
                 {allocatedBlocks.map((block) => (
                   <tr 
                     key={block.allocId}
-                    style={{ borderBottom: '1px solid var(--color-border-subtle)', transition: 'background 0.15s ease' }}
+                    style={{ borderBottom: '1px solid var(--color-border-subtle)', transition: 'background 0.12s ease' }}
                   >
-                    <td style={{ padding: '0.75rem 0.5rem' }}>
+                    <td style={{ padding: '0.625rem 0.5rem' }}>
                       <span className="badge badge-allocated">
                         ID #{block.allocId}
                       </span>
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-primary)' }}>
+                    <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-primary)' }}>
                       0x{block.startOffset.toString(16).toUpperCase().padStart(2, '0')} ({block.startOffset})
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', fontWeight: 600, color: 'var(--mem-allocated)' }}>
+                    <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', fontWeight: 600, color: 'var(--mem-allocated)' }}>
                       {block.size} units
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
+                    <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
                       [{block.startOffset} .. {block.startOffset + block.size})
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-muted)' }}>
+                    <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-muted)' }}>
                       {((block.size / engineState.stats.totalPoolSize) * 100).toFixed(1)}%
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right' }}>
+                    <td style={{ padding: '0.625rem 0.5rem', textAlign: 'right' }}>
                       <button
                         onClick={() => onFree(block.allocId)}
                         className="btn btn-secondary"
-                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', color: 'var(--mem-error)' }}
+                        style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem', color: 'var(--mem-error)' }}
                         title={`Deallocate Block #${block.allocId}`}
                       >
-                        <Trash2 size={13} />
+                        <Trash2 size={12} />
                         <span>Free #{block.allocId}</span>
                       </button>
                     </td>

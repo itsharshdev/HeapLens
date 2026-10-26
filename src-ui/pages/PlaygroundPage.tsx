@@ -46,7 +46,7 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
       if (res.success) {
         setLastMessage({ type: 'success', text: `Successfully allocated ${allocSize} units using First Fit!` });
         if (res.trace) setLatestTrace(res.trace);
-        confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+        confetti({ particleCount: 25, spread: 55, origin: { y: 0.8 } });
       } else {
         setLastMessage({ type: 'error', text: res.errorMessage || 'Allocation failed.' });
         if (res.trace) setLatestTrace(res.trace);
@@ -103,9 +103,9 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
     setIsLoading(true);
     try {
       await onReset(100);
-      const r1 = await onAllocate(20); // ID 1
-      const r2 = await onAllocate(30); // ID 2
-      const r3 = await onAllocate(50); // ID 3
+      await onAllocate(20); // ID 1
+      await onAllocate(30); // ID 2
+      await onAllocate(50); // ID 3
       // Free ID 1 and ID 3, leaving ID 2 in the middle
       await onFree(1);
       await onFree(3);
@@ -159,9 +159,9 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
 
       {/* Preset Scenarios Toolbar */}
       <div 
-        className="glass-panel" 
+        className="instrument-card" 
         style={{
-          padding: '1rem',
+          padding: '0.875rem 1.125rem',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
@@ -170,28 +170,28 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Zap size={18} style={{ color: 'var(--mem-split)' }} />
-          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Viva Interactive Demos:
+          <Zap size={16} style={{ color: 'var(--mem-split)' }} />
+          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+            Interactive Scenarios:
           </span>
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <button onClick={runScenarioSplit} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.8125rem' }}>
-            <Scissors size={14} style={{ color: 'var(--mem-free)' }} />
-            <span>1. Block Splitting Demo</span>
+          <button onClick={runScenarioSplit} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.75rem' }}>
+            <Scissors size={13} style={{ color: 'var(--mem-free)' }} />
+            <span>1. Block Splitting</span>
           </button>
-          <button onClick={runScenarioCoalesce} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.8125rem' }}>
-            <Merge size={14} style={{ color: '#a855f7' }} />
+          <button onClick={runScenarioCoalesce} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.75rem' }}>
+            <Merge size={13} style={{ color: '#a855f7' }} />
             <span>2. Coalescing (3 Blocks)</span>
           </button>
-          <button onClick={runScenarioFragmentation} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.8125rem' }}>
-            <AlertCircle size={14} style={{ color: 'var(--mem-fragmented)' }} />
+          <button onClick={runScenarioFragmentation} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.75rem' }}>
+            <AlertCircle size={13} style={{ color: 'var(--mem-fragmented)' }} />
             <span>3. External Fragmentation</span>
           </button>
-          <button onClick={() => onReset(100)} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.8125rem' }}>
-            <RotateCcw size={14} />
-            <span>Reset</span>
+          <button onClick={() => onReset(100)} disabled={isLoading} className="btn btn-secondary" style={{ fontSize: '0.75rem' }}>
+            <RotateCcw size={13} />
+            <span>Reset Pool</span>
           </button>
         </div>
       </div>
@@ -199,9 +199,9 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
       {/* Operation Feedback Message Banner */}
       {lastMessage && (
         <div 
-          className="glass-panel animate-fade-in"
+          className="instrument-card animate-fade-in"
           style={{
-            padding: '0.875rem 1.25rem',
+            padding: '0.75rem 1.125rem',
             borderLeft: `4px solid ${
               lastMessage.type === 'success' ? 'var(--mem-allocated)' :
               lastMessage.type === 'error' ? 'var(--mem-error)' : 'var(--mem-free)'
@@ -212,30 +212,30 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
           }}
         >
           {lastMessage.type === 'success' ? (
-            <CheckCircle2 size={18} style={{ color: 'var(--mem-allocated)', flexShrink: 0 }} />
+            <CheckCircle2 size={16} style={{ color: 'var(--mem-allocated)', flexShrink: 0 }} />
           ) : (
-            <AlertCircle size={18} style={{ color: lastMessage.type === 'error' ? 'var(--mem-error)' : 'var(--mem-free)', flexShrink: 0 }} />
+            <AlertCircle size={16} style={{ color: lastMessage.type === 'error' ? 'var(--mem-error)' : 'var(--mem-free)', flexShrink: 0 }} />
           )}
-          <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
+          <span style={{ fontSize: '0.8125rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
             {lastMessage.text}
           </span>
         </div>
       )}
 
       {/* Interactive Controls & Forms */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
         {/* Form 1: Allocate */}
-        <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <Play size={18} style={{ color: 'var(--mem-allocated)' }} />
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+        <div className="instrument-card" style={{ padding: '1.375rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.875rem' }}>
+            <Play size={16} style={{ color: 'var(--mem-allocated)' }} />
+            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text-primary)' }}>
               Allocate Memory (First Fit)
             </h3>
           </div>
 
-          <form onSubmit={handleAllocateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form onSubmit={handleAllocateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
                 Requested Allocation Size (units):
               </label>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -247,13 +247,13 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
                   onChange={(e) => setAllocSize(Number(e.target.value))}
                   style={{
                     flex: 1,
-                    padding: '0.625rem 0.875rem',
-                    background: 'var(--color-surface)',
+                    padding: '0.5625rem 0.75rem',
+                    background: 'var(--color-canvas)',
                     border: '1px solid var(--color-border)',
-                    borderRadius: '0.5rem',
+                    borderRadius: '0.375rem',
                     color: 'var(--text-primary)',
                     fontFamily: 'JetBrains Mono',
-                    fontSize: '1rem',
+                    fontSize: '0.9375rem',
                   }}
                   required
                 />
@@ -264,15 +264,15 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
             </div>
 
             {/* Quick Size Presets */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Quick Presets:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Quick Presets:</span>
               {[10, 20, 25, 35, 50].map((sz) => (
                 <button
                   type="button"
                   key={sz}
                   onClick={() => setAllocSize(sz)}
                   className="btn btn-secondary"
-                  style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', fontFamily: 'JetBrains Mono' }}
+                  style={{ padding: '0.15rem 0.45rem', fontSize: '0.6875rem', fontFamily: 'JetBrains Mono' }}
                 >
                   {sz}u
                 </button>
@@ -282,17 +282,17 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
         </div>
 
         {/* Form 2: Deallocate */}
-        <div className="glass-panel" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <Trash2 size={18} style={{ color: 'var(--mem-error)' }} />
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+        <div className="instrument-card" style={{ padding: '1.375rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.875rem' }}>
+            <Trash2 size={16} style={{ color: 'var(--mem-error)' }} />
+            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text-primary)' }}>
               Deallocate Block (by ID)
             </h3>
           </div>
 
-          <form onSubmit={handleFreeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form onSubmit={handleFreeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
                 Allocation ID to Free:
               </label>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -302,13 +302,13 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
                     onChange={(e) => setFreeId(Number(e.target.value))}
                     style={{
                       flex: 1,
-                      padding: '0.625rem 0.875rem',
-                      background: 'var(--color-surface)',
+                      padding: '0.5625rem 0.75rem',
+                      background: 'var(--color-canvas)',
                       border: '1px solid var(--color-border)',
-                      borderRadius: '0.5rem',
+                      borderRadius: '0.375rem',
                       color: 'var(--text-primary)',
                       fontFamily: 'JetBrains Mono',
-                      fontSize: '1rem',
+                      fontSize: '0.9375rem',
                     }}
                   >
                     {allocatedIds.map((id) => (
@@ -324,13 +324,13 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
                     placeholder="e.g. 1"
                     style={{
                       flex: 1,
-                      padding: '0.625rem 0.875rem',
-                      background: 'var(--color-surface)',
+                      padding: '0.5625rem 0.75rem',
+                      background: 'var(--color-canvas)',
                       border: '1px solid var(--color-border)',
-                      borderRadius: '0.5rem',
+                      borderRadius: '0.375rem',
                       color: 'var(--text-primary)',
                       fontFamily: 'JetBrains Mono',
-                      fontSize: '1rem',
+                      fontSize: '0.9375rem',
                     }}
                   />
                 )}
@@ -345,7 +345,7 @@ export const PlaygroundPage: React.FC<PlaygroundPageProps> = ({
             </div>
 
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Deallocating a block triggers adjacent free block coalescing to reclaim contiguous space.
+              Deallocating automatically triggers adjacent free block coalescing.
             </p>
           </form>
         </div>

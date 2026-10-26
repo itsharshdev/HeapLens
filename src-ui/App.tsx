@@ -16,9 +16,19 @@ import { PlaygroundPage } from './pages/PlaygroundPage';
 import { LinkedListPage } from './pages/LinkedListPage';
 import { LearnPage } from './pages/LearnPage';
 
+// Helper to parse route from URL hash
+const getRouteFromHash = (): AppRoute => {
+  const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  if (hash === 'dashboard') return 'dashboard';
+  if (hash === 'playground') return 'playground';
+  if (hash === 'linked-list') return 'linked-list';
+  if (hash === 'learn') return 'learn';
+  return 'home';
+};
+
 export const App: React.FC = () => {
-  // Navigation Route State
-  const [currentRoute, setCurrentRoute] = useState<AppRoute>('home');
+  // Navigation Route State initialized from URL hash
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>(getRouteFromHash);
 
   // Theme State with localStorage Persistence
   const [theme, setTheme] = useState<ThemeMode>(() => {
@@ -32,6 +42,25 @@ export const App: React.FC = () => {
   // Live Allocator State
   const [engineState, setEngineState] = useState<EngineState>(PREVIEW_INITIAL_STATE);
   const [isEngineConnected, setIsEngineConnected] = useState<boolean>(false);
+
+  // Navigation handler synchronizing state & URL hash
+  const handleNavigate = (route: AppRoute) => {
+    setCurrentRoute(route);
+    const targetHash = route === 'home' ? '' : `#/${route}`;
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Listen to browser forward/backward hashchange events
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentRoute(getRouteFromHash());
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Sync theme changes to html element and localStorage
   const handleThemeChange = (newTheme: ThemeMode) => {
@@ -69,11 +98,6 @@ export const App: React.FC = () => {
   // Handlers for Allocator Actions
   const handleAllocate = async (size: number) => {
     if (!isEngineConnected) {
-      // Local preview simulation if backend is offline
-      const nextId = engineState.nextAllocId;
-      const newBlock = { startOffset: engineState.stats.totalAllocated, size, isFree: false, allocId: nextId };
-      const updatedBlocks = [...engineState.blocks.filter(b => !b.isFree), newBlock];
-      // Note: Clearly reported
       return { 
         success: true, 
         trace: [
@@ -129,10 +153,7 @@ export const App: React.FC = () => {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar
         currentRoute={currentRoute}
-        onNavigate={(route) => {
-          setCurrentRoute(route);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onNavigate={handleNavigate}
         theme={theme}
         onThemeChange={handleThemeChange}
         isEngineConnected={isEngineConnected}
@@ -143,10 +164,9 @@ export const App: React.FC = () => {
           <LandingPage
             engineState={engineState}
             isEngineConnected={isEngineConnected}
-            onNavigate={(route) => {
-              setCurrentRoute(route);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
+            onQuickAllocate={handleAllocate}
+            onQuickReset={() => handleReset(100)}
           />
         )}
 
@@ -156,7 +176,7 @@ export const App: React.FC = () => {
             isEngineConnected={isEngineConnected}
             onFree={handleFree}
             onReset={() => handleReset(100)}
-            onNavigateToPlayground={() => setCurrentRoute('playground')}
+            onNavigateToPlayground={() => handleNavigate('playground')}
           />
         )}
 
@@ -178,12 +198,7 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      <Footer
-        onNavigate={(route) => {
-          setCurrentRoute(route);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+      <Footer onNavigate={handleNavigate} />
     </div>
   );
 };

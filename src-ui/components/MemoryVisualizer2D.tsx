@@ -20,7 +20,7 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
   const totalPoolSize = stats.totalPoolSize || 100;
 
   return (
-    <div className="glass-panel" style={{ padding: '1.25rem', overflow: 'hidden' }}>
+    <div className="instrument-card" style={{ padding: '1.25rem', overflow: 'hidden' }}>
       {/* Header with Title and Legend */}
       <div 
         style={{
@@ -33,11 +33,11 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Layers size={18} style={{ color: 'var(--mem-allocated)' }} />
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Simulated Memory Arena Map
+          <Layers size={17} style={{ color: 'var(--mem-allocated)' }} />
+          <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+            Contiguous Memory Arena Map
           </h3>
-          <span className="badge badge-free" style={{ fontSize: '0.75rem' }}>
+          <span className="badge badge-free" style={{ fontSize: '0.6875rem' }}>
             {totalPoolSize} Units (0x00 - 0x{totalPoolSize.toString(16).toUpperCase()})
           </span>
         </div>
@@ -47,9 +47,9 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             <span 
               style={{
-                width: '12px',
-                height: '12px',
-                borderRadius: '3px',
+                width: '10px',
+                height: '10px',
+                borderRadius: '2px',
                 background: 'var(--mem-allocated)',
                 display: 'inline-block'
               }}
@@ -59,9 +59,9 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             <span 
               style={{
-                width: '12px',
-                height: '12px',
-                borderRadius: '3px',
+                width: '10px',
+                height: '10px',
+                borderRadius: '2px',
                 background: 'var(--mem-free-bg)',
                 border: '1px solid var(--mem-free-border)',
                 display: 'inline-block'
@@ -77,13 +77,12 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
         style={{
           display: 'flex',
           width: '100%',
-          height: '68px',
-          background: 'var(--color-surface)',
-          borderRadius: '0.5rem',
+          height: '62px',
+          background: 'var(--color-canvas)',
+          borderRadius: '0.4375rem',
           border: '1px solid var(--color-border)',
           overflow: 'hidden',
           position: 'relative',
-          boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.3)',
         }}
         role="region"
         aria-label="Contiguous memory block visualization"
@@ -101,7 +100,7 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
               onMouseLeave={() => setHoveredBlock(null)}
               style={{
                 width: `${widthPercent}%`,
-                minWidth: '24px',
+                minWidth: '22px',
                 height: '100%',
                 position: 'relative',
                 cursor: 'pointer',
@@ -109,10 +108,10 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: '0.25rem',
+                padding: '0.2rem',
                 borderRight: index < blocks.length - 1 ? '1px solid var(--color-border)' : 'none',
                 background: block.isFree ? 'var(--mem-free-bg)' : 'var(--mem-allocated-bg)',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.12s ease',
                 outline: isHighlighted ? '2px solid var(--mem-split)' : isSelected ? '2px solid var(--text-primary)' : 'none',
                 outlineOffset: '-2px',
                 zIndex: isSelected ? 10 : 1,
@@ -121,7 +120,7 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
               {/* Block Indicator Icon / State */}
               <div 
                 style={{
-                  fontSize: '0.75rem',
+                  fontSize: '0.6875rem',
                   fontWeight: 700,
                   fontFamily: 'JetBrains Mono',
                   color: block.isFree ? 'var(--mem-free)' : 'var(--mem-allocated)',
@@ -138,17 +137,17 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
               {/* Block Size */}
               <div 
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   fontFamily: 'JetBrains Mono',
                   color: 'var(--text-secondary)',
-                  opacity: 0.85,
-                  marginTop: '2px',
+                  opacity: 0.8,
+                  marginTop: '1px',
                 }}
               >
                 {block.size}u
               </div>
 
-              {/* Hover Highlight Bar */}
+              {/* Selection underline */}
               {isSelected && (
                 <div 
                   style={{
@@ -156,7 +155,7 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: '3px',
+                    height: '2px',
                     background: block.isFree ? 'var(--mem-free)' : 'var(--mem-allocated)',
                   }}
                 />
@@ -171,8 +170,8 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          marginTop: '0.375rem',
-          fontSize: '0.6875rem',
+          marginTop: '0.35rem',
+          fontSize: '0.625rem',
           fontFamily: 'JetBrains Mono',
           color: 'var(--text-muted)',
           padding: '0 2px',
@@ -188,48 +187,46 @@ export const MemoryVisualizer2D: React.FC<MemoryVisualizer2DProps> = ({
       {/* Interactive Detail Inspector Box */}
       <div 
         style={{
-          marginTop: '1rem',
-          padding: '0.75rem 1rem',
-          background: 'var(--color-surface)',
-          borderRadius: '0.5rem',
+          marginTop: '0.875rem',
+          padding: '0.625rem 0.875rem',
+          background: 'var(--color-canvas)',
+          borderRadius: '0.375rem',
           border: '1px solid var(--color-border)',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '0.75rem',
+          gap: '0.625rem',
         }}
       >
         {hoveredBlock ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span className={`badge ${hoveredBlock.isFree ? 'badge-free' : 'badge-allocated'}`}>
-                {hoveredBlock.isFree ? 'FREE BLOCK' : `ALLOCATION #${hoveredBlock.allocId}`}
-              </span>
-            </div>
-            <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <span className={`badge ${hoveredBlock.isFree ? 'badge-free' : 'badge-allocated'}`}>
+              {hoveredBlock.isFree ? 'FREE' : `ALLOC #${hoveredBlock.allocId}`}
+            </span>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
               Range: <strong style={{ color: 'var(--text-primary)', fontFamily: 'JetBrains Mono' }}>
                 [{hoveredBlock.startOffset} .. {hoveredBlock.startOffset + hoveredBlock.size})
               </strong>
             </div>
-            <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-              Capacity: <strong style={{ color: 'var(--text-primary)', fontFamily: 'JetBrains Mono' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+              Size: <strong style={{ color: 'var(--text-primary)', fontFamily: 'JetBrains Mono' }}>
                 {hoveredBlock.size} units ({((hoveredBlock.size / totalPoolSize) * 100).toFixed(1)}%)
               </strong>
             </div>
-            <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-              Hex Offset: <span className="font-mono text-muted">0x{hoveredBlock.startOffset.toString(16).toUpperCase().padStart(2, '0')}</span>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Hex: <span className="font-mono">0x{hoveredBlock.startOffset.toString(16).toUpperCase().padStart(2, '0')}</span>
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-            <Info size={15} />
-            <span>Hover or click any memory block above to inspect address boundaries, allocation ID, and size.</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <Info size={14} />
+            <span>Hover any memory block above to inspect address boundaries, allocation ID, and size.</span>
           </div>
         )}
 
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono' }}>
-          Blocks Count: {blocks.length}
+        <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono' }}>
+          Nodes in Chain: {blocks.length}
         </div>
       </div>
     </div>

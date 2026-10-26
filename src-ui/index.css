@@ -4,47 +4,47 @@
 
 :root,
 html.theme-dark {
-  /* Primitive Palette */
-  --color-canvas: #070a11;
-  --color-canvas-subtle: #0b1120;
-  --color-surface: #0f172a;
-  --color-surface-hover: #17233d;
-  --color-surface-elevated: #1e293b;
-  --color-border: #1e293b;
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  /* Primitive & Surface Palette */
+  --color-canvas: #07090e;
+  --color-canvas-subtle: #0c1019;
+  --color-surface: #0f1624;
+  --color-surface-hover: #151f33;
+  --color-surface-elevated: #1a263e;
+  --color-border: #1a263e;
+  --color-border-subtle: rgba(255, 255, 255, 0.07);
   --color-border-focus: #10b981;
 
   /* Typography */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  --text-inverse: #070a11;
+  --text-inverse: #07090e;
 
   /* Allocator Memory Semantics */
   --mem-free: #06b6d4;
-  --mem-free-bg: rgba(6, 182, 212, 0.12);
-  --mem-free-border: rgba(6, 182, 212, 0.4);
+  --mem-free-bg: rgba(6, 182, 212, 0.1);
+  --mem-free-border: rgba(6, 182, 212, 0.35);
   --mem-allocated: #10b981;
-  --mem-allocated-bg: rgba(16, 185, 129, 0.18);
-  --mem-allocated-border: rgba(16, 185, 129, 0.5);
+  --mem-allocated-bg: rgba(16, 185, 129, 0.15);
+  --mem-allocated-border: rgba(16, 185, 129, 0.45);
   --mem-split: #eab308;
-  --mem-split-bg: rgba(234, 179, 8, 0.16);
+  --mem-split-bg: rgba(234, 179, 8, 0.14);
   --mem-coalesce: #a855f7;
   --mem-fragmented: #f59e0b;
   --mem-error: #f43f5e;
-  --mem-error-bg: rgba(244, 63, 94, 0.15);
+  --mem-error-bg: rgba(244, 63, 94, 0.12);
 
-  /* Glow and Shadows */
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  --shadow-glow-emerald: 0 0 25px rgba(16, 185, 129, 0.25);
-  --shadow-glow-cyan: 0 0 25px rgba(6, 182, 212, 0.25);
-  --glass-bg: rgba(15, 23, 42, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  /* Shadows and Glass */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+  --shadow-glow-emerald: 0 0 20px rgba(16, 185, 129, 0.2);
+  --shadow-glow-cyan: 0 0 20px rgba(6, 182, 212, 0.2);
+  --glass-bg: rgba(12, 17, 28, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
 
-  --grid-line: rgba(255, 255, 255, 0.03);
+  --grid-line: rgba(255, 255, 255, 0.025);
 }
 
-/* Light Mode: Clean Precision Laboratory */
+/* Light Mode: Clean Precision Technical Laboratory */
 html.theme-light {
   --color-canvas: #f8fafc;
   --color-canvas-subtle: #f1f5f9;
@@ -61,28 +61,28 @@ html.theme-light {
   --text-inverse: #ffffff;
 
   --mem-free: #0284c7;
-  --mem-free-bg: rgba(2, 132, 199, 0.1);
-  --mem-free-border: rgba(2, 132, 199, 0.4);
+  --mem-free-bg: rgba(2, 132, 199, 0.08);
+  --mem-free-border: rgba(2, 132, 199, 0.35);
   --mem-allocated: #059669;
-  --mem-allocated-bg: rgba(5, 150, 105, 0.12);
-  --mem-allocated-border: rgba(5, 150, 105, 0.45);
+  --mem-allocated-bg: rgba(5, 150, 105, 0.1);
+  --mem-allocated-border: rgba(5, 150, 105, 0.4);
   --mem-split: #d97706;
-  --mem-split-bg: rgba(217, 119, 6, 0.12);
+  --mem-split-bg: rgba(217, 119, 6, 0.1);
   --mem-coalesce: #9333ea;
   --mem-fragmented: #d97706;
   --mem-error: #e11d48;
-  --mem-error-bg: rgba(225, 29, 72, 0.1);
+  --mem-error-bg: rgba(225, 29, 72, 0.08);
 
-  --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.08);
-  --shadow-glow-emerald: 0 0 20px rgba(5, 150, 105, 0.15);
-  --shadow-glow-cyan: 0 0 20px rgba(2, 132, 199, 0.15);
-  --glass-bg: rgba(255, 255, 255, 0.85);
+  --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+  --shadow-glow-emerald: 0 0 16px rgba(5, 150, 105, 0.12);
+  --shadow-glow-cyan: 0 0 16px rgba(2, 132, 199, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.88);
   --glass-border: rgba(15, 23, 42, 0.08);
 
-  --grid-line: rgba(15, 23, 42, 0.035);
+  --grid-line: rgba(15, 23, 42, 0.03);
 }
 
-/* HeapLens Lab: Retro-Phosphor Cyber Instrument */
+/* HeapLens Lab: Authentic Phosphor Cyber Instrument */
 html.theme-lab {
   --color-canvas: #040806;
   --color-canvas-subtle: #08120b;
@@ -99,25 +99,25 @@ html.theme-lab {
   --text-inverse: #040806;
 
   --mem-free: #38bdf8;
-  --mem-free-bg: rgba(56, 189, 248, 0.12);
-  --mem-free-border: rgba(56, 189, 248, 0.5);
+  --mem-free-bg: rgba(56, 189, 248, 0.1);
+  --mem-free-border: rgba(56, 189, 248, 0.4);
   --mem-allocated: #34d399;
-  --mem-allocated-bg: rgba(52, 211, 153, 0.22);
+  --mem-allocated-bg: rgba(52, 211, 153, 0.18);
   --mem-allocated-border: #34d399;
   --mem-split: #fbbf24;
-  --mem-split-bg: rgba(251, 191, 36, 0.18);
+  --mem-split-bg: rgba(251, 191, 36, 0.16);
   --mem-coalesce: #c084fc;
   --mem-fragmented: #fbbf24;
   --mem-error: #fb7185;
-  --mem-error-bg: rgba(251, 113, 133, 0.2);
+  --mem-error-bg: rgba(251, 113, 133, 0.18);
 
-  --shadow-card: 0 0 24px -4px rgba(52, 211, 153, 0.15);
-  --shadow-glow-emerald: 0 0 30px rgba(52, 211, 153, 0.35);
-  --shadow-glow-cyan: 0 0 30px rgba(56, 189, 248, 0.35);
+  --shadow-card: 0 0 20px -4px rgba(52, 211, 153, 0.12);
+  --shadow-glow-emerald: 0 0 24px rgba(52, 211, 153, 0.25);
+  --shadow-glow-cyan: 0 0 24px rgba(56, 189, 248, 0.25);
   --glass-bg: rgba(10, 23, 14, 0.85);
-  --glass-border: rgba(52, 211, 153, 0.25);
+  --glass-border: rgba(52, 211, 153, 0.2);
 
-  --grid-line: rgba(52, 211, 153, 0.05);
+  --grid-line: rgba(52, 211, 153, 0.04);
 }
 
 /* ==========================================================================
@@ -137,7 +137,7 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   background-image: 
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
@@ -148,7 +148,7 @@ code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Accessible visible focus */
+/* Accessible focus ring */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -159,8 +159,8 @@ select:focus-visible {
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-canvas);
@@ -173,7 +173,7 @@ select:focus-visible {
   background: var(--color-border-focus);
 }
 
-/* Container */
+/* Responsive Container */
 .container {
   width: 100%;
   max-width: 1240px;
@@ -183,11 +183,23 @@ select:focus-visible {
   padding-right: 1.25rem;
 }
 
-/* Glassmorphism Panel */
-.glass-panel {
+/* Solid Technical Instrument Panel (No overuse of frosted glass) */
+.instrument-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.625rem;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.15s ease;
+}
+.instrument-card:hover {
+  border-color: var(--color-surface-hover);
+}
+
+/* Selective Liquid Glass (Reserved for floating navbar & tooltips) */
+.glass-floating {
   background: var(--glass-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-card);
   border-radius: 0.75rem;
@@ -199,12 +211,12 @@ select:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.5rem;
+  padding: 0.5625rem 1.125rem;
+  border-radius: 0.4375rem;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
   border: 1px solid transparent;
   line-height: 1;
@@ -213,7 +225,7 @@ select:focus-visible {
 .btn-primary {
   background: var(--mem-allocated);
   color: var(--text-inverse);
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 .btn-primary:hover:not(:disabled) {
   opacity: 0.92;
@@ -242,7 +254,7 @@ select:focus-visible {
 }
 
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
   transform: none !important;
 }
@@ -254,7 +266,7 @@ select:focus-visible {
   gap: 0.35rem;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.2rem 0.6rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 9999px;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.02em;
@@ -279,18 +291,13 @@ select:focus-visible {
 }
 
 /* Animations */
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 10px var(--mem-allocated)); }
-  50% { opacity: 1; filter: drop-shadow(0 0 22px var(--mem-allocated)); }
-}
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Reduced Motion Override */

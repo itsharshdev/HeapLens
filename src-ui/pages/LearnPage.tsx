@@ -12,14 +12,14 @@ import {
   AlertTriangle 
 } from 'lucide-react';
 
-interface VivaQuestion {
+interface ConceptQuestion {
   question: string;
   answer: string;
   keyFormula?: string;
   tags: string[];
 }
 
-const VIVA_QUESTIONS: VivaQuestion[] = [
+const TECHNICAL_QUESTIONS: ConceptQuestion[] = [
   {
     question: "Why use a linked list for allocator block metadata instead of an array?",
     answer: "Dynamic memory allocation requires frequent block splitting (inserting a new remainder block) and block coalescing (merging and removing adjacent blocks). In a contiguous array, inserting or deleting an element requires shifting all subsequent elements, taking O(N) time. In a linked list, inserting or removing adjacent nodes takes O(1) pointer updates once the target position is reached.",
@@ -64,89 +64,89 @@ export const LearnPage: React.FC = () => {
     <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingTop: '1.5rem' }}>
       {/* Header */}
       <div>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0.85rem', borderRadius: '9999px', background: 'var(--mem-allocated-bg)', border: '1px solid var(--mem-allocated-border)', marginBottom: '0.75rem' }}>
-          <BookOpen size={14} style={{ color: 'var(--mem-allocated)' }} />
-          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--mem-allocated)', fontFamily: 'JetBrains Mono' }}>
-            Viva Defense Preparation Guide
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', background: 'var(--mem-allocated-bg)', border: '1px solid var(--mem-allocated-border)', marginBottom: '0.75rem' }}>
+          <BookOpen size={13} style={{ color: 'var(--mem-allocated)' }} />
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mem-allocated)', fontFamily: 'JetBrains Mono' }}>
+            Memory Management Guide
           </span>
         </div>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-          Dynamic Memory Allocator Masterclass
+        <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+          How Memory Management Works
         </h1>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '750px', fontSize: '0.9375rem', lineHeight: 1.6 }}>
-          Comprehensive conceptual explanations, algorithmic complexity tables, and high-frequency exam questions to help your team earn top marks in the project viva.
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '720px', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+          Comprehensive conceptual explanations, data structure invariants, pointer update mechanics, and interactive technical questions and answers.
         </p>
       </div>
 
       {/* Algorithmic Complexity Table */}
-      <div className="glass-panel" style={{ padding: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '1rem' }}>
+      <div className="instrument-card" style={{ padding: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.1875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '1rem' }}>
           Algorithmic Complexity Summary
         </h2>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: 'var(--text-muted)' }}>
-                <th style={{ padding: '0.75rem 0.5rem' }}>OPERATION</th>
-                <th style={{ padding: '0.75rem 0.5rem' }}>TIME COMPLEXITY</th>
-                <th style={{ padding: '0.75rem 0.5rem' }}>SPACE COMPLEXITY</th>
-                <th style={{ padding: '0.75rem 0.5rem' }}>MECHANISM</th>
+                <th style={{ padding: '0.625rem 0.5rem' }}>OPERATION</th>
+                <th style={{ padding: '0.625rem 0.5rem' }}>TIME COMPLEXITY</th>
+                <th style={{ padding: '0.625rem 0.5rem' }}>SPACE COMPLEXITY</th>
+                <th style={{ padding: '0.625rem 0.5rem' }}>MECHANISM</th>
               </tr>
             </thead>
             <tbody>
               <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
-                <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   First Fit Allocate
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
                   O(N)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
                   O(1)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', color: 'var(--text-secondary)' }}>
                   Linear traversal from head; stops on first fit; splits remainder node in O(1).
                 </td>
               </tr>
               <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
-                <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   Deallocate (by ID)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
                   O(N)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
                   O(1)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', color: 'var(--text-secondary)' }}>
                   Searches list for unique allocId, marks free, and triggers adjacent coalescing.
                 </td>
               </tr>
               <tr style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
-                <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   Adjacent Coalescing
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
                   O(N)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
                   O(1)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', color: 'var(--text-secondary)' }}>
                   Single-pass sweep; merges adjacent free nodes and deletes redundant metadata.
                 </td>
               </tr>
               <tr>
-                <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   Reset Pool
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--mem-allocated)' }}>
                   O(N)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', fontFamily: 'JetBrains Mono', color: 'var(--text-secondary)' }}>
                   O(1)
                 </td>
-                <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text-secondary)' }}>
+                <td style={{ padding: '0.625rem 0.5rem', color: 'var(--text-secondary)' }}>
                   Deletes all allocated nodes and creates a single free block spanning [0, poolSize).
                 </td>
               </tr>
@@ -155,23 +155,23 @@ export const LearnPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Interactive Viva Questions Accordion */}
+      {/* Technical Q&A Accordion */}
       <div>
-        <h2 style={{ fontSize: '1.375rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1.25rem' }}>
-          Top Viva Defense Questions & Formulated Answers
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '1rem' }}>
+          Technical Architecture & Design Questions
         </h2>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-          {VIVA_QUESTIONS.map((item, index) => {
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {TECHNICAL_QUESTIONS.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <div 
                 key={index}
-                className="glass-panel"
+                className="instrument-card"
                 style={{
                   border: `1px solid ${isOpen ? 'var(--mem-allocated-border)' : 'var(--color-border)'}`,
                   overflow: 'hidden',
-                  transition: 'border-color 0.2s ease',
+                  transition: 'border-color 0.15s ease',
                 }}
               >
                 {/* Question Header Button */}
@@ -179,7 +179,7 @@ export const LearnPage: React.FC = () => {
                   onClick={() => toggleQuestion(index)}
                   style={{
                     width: '100%',
-                    padding: '1.25rem',
+                    padding: '1.125rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -190,33 +190,33 @@ export const LearnPage: React.FC = () => {
                     textAlign: 'left',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <HelpCircle size={18} style={{ color: isOpen ? 'var(--mem-allocated)' : 'var(--text-muted)', flexShrink: 0 }} />
-                    <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                    <HelpCircle size={16} style={{ color: isOpen ? 'var(--mem-allocated)' : 'var(--text-muted)', flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                       Q{index + 1}: {item.question}
                     </span>
                   </div>
-                  {isOpen ? <ChevronUp size={18} style={{ color: 'var(--mem-allocated)' }} /> : <ChevronDown size={18} style={{ color: 'var(--text-muted)' }} />}
+                  {isOpen ? <ChevronUp size={16} style={{ color: 'var(--mem-allocated)' }} /> : <ChevronDown size={16} style={{ color: 'var(--text-muted)' }} />}
                 </button>
 
                 {/* Answer Content */}
                 {isOpen && (
-                  <div style={{ padding: '0 1.25rem 1.25rem', borderTop: '1px solid var(--color-border-subtle)', paddingTop: '1rem' }}>
-                    <p style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '0.75rem' }}>
+                  <div style={{ padding: '0 1.125rem 1.125rem', borderTop: '1px solid var(--color-border-subtle)', paddingTop: '0.875rem' }}>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '0.625rem' }}>
                       {item.answer}
                     </p>
 
                     {item.keyFormula && (
                       <div 
                         style={{
-                          padding: '0.75rem 1rem',
-                          background: 'var(--color-surface)',
-                          borderRadius: '0.375rem',
+                          padding: '0.625rem 0.875rem',
+                          background: 'var(--color-canvas)',
+                          borderRadius: '0.35rem',
                           border: '1px solid var(--color-border)',
                           fontFamily: 'JetBrains Mono',
-                          fontSize: '0.875rem',
+                          fontSize: '0.8125rem',
                           color: 'var(--mem-split)',
-                          marginBottom: '0.75rem',
+                          marginBottom: '0.625rem',
                         }}
                       >
                         {item.keyFormula}
@@ -224,7 +224,7 @@ export const LearnPage: React.FC = () => {
                     )}
 
                     {/* Tags */}
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                       {item.tags.map((t) => (
                         <span key={t} className="badge badge-free" style={{ fontSize: '0.6875rem' }}>
                           {t}
