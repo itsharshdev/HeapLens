@@ -3,6 +3,8 @@ import { AppRoute, EngineState } from '../types';
 import { MemoryScene3D } from '../components/MemoryScene3D';
 import { MemoryVisualizer2D } from '../components/MemoryVisualizer2D';
 import { MetricsGrid } from '../components/MetricsGrid';
+import { AllocatorStoryline } from '../components/AllocatorStoryline';
+import { ArchitectureFlow } from '../components/ArchitectureFlow';
 import { 
   ArrowRight, 
   Play, 
@@ -15,7 +17,10 @@ import {
   Terminal, 
   ShieldCheck,
   Zap,
-  RotateCcw
+  RotateCcw,
+  Sparkles,
+  Layers,
+  Box
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -34,54 +39,75 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onQuickReset,
 }) => {
   const [quickTrialStatus, setQuickTrialStatus] = useState<string>('');
+  const [isAllocating, setIsAllocating] = useState<boolean>(false);
 
   const runHeroTrial = async (size: number) => {
-    if (!onQuickAllocate) return;
+    if (!onQuickAllocate || isAllocating) return;
+    setIsAllocating(true);
     setQuickTrialStatus(`Allocating ${size} units...`);
     try {
       const res = await onQuickAllocate(size);
       if (res.success) {
-        setQuickTrialStatus(`Allocated ${size} units. Look at the 3D and 2D visualizers above!`);
+        setQuickTrialStatus(`Allocated ${size} units. Real C++ heap state updated above!`);
       } else {
         setQuickTrialStatus(res.errorMessage || 'Allocation failed.');
       }
     } catch (e: any) {
       setQuickTrialStatus(e.message);
+    } finally {
+      setIsAllocating(false);
     }
   };
 
   const runHeroReset = async () => {
-    if (!onQuickReset) return;
+    if (!onQuickReset || isAllocating) return;
+    setIsAllocating(true);
     setQuickTrialStatus('Resetting memory pool...');
-    await onQuickReset();
-    setQuickTrialStatus('Pool reset to 100 free units.');
+    try {
+      await onQuickReset();
+      setQuickTrialStatus('Pool reset to 100 free contiguous units.');
+    } finally {
+      setIsAllocating(false);
+    }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
-      {/* Hero Section */}
-      <section className="container" style={{ paddingTop: '2rem' }}>
-        {/* Top Technical Headline */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', background: 'var(--mem-allocated-bg)', border: '1px solid var(--mem-allocated-border)', marginBottom: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
+      {/* 1. Hero Section */}
+      <section className="container" style={{ paddingTop: '2.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          {/* Subtle Technical Pill */}
+          <div 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.45rem', 
+              padding: '0.35rem 0.85rem', 
+              borderRadius: '9999px', 
+              background: 'var(--mem-allocated-bg)', 
+              border: '1px solid var(--mem-allocated-border)', 
+              marginBottom: '1.25rem' 
+            }}
+          >
             <Terminal size={13} style={{ color: 'var(--mem-allocated)' }} />
             <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mem-allocated)', fontFamily: 'JetBrains Mono' }}>
-              Contiguous Memory Arena • C++17 Engine
+              C++17 Engine • Singly Linked-List Simulation
             </span>
           </div>
 
+          {/* Primary Product Headline */}
           <h1 
             style={{
-              fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)',
+              fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               fontWeight: 800,
-              lineHeight: 1.15,
-              letterSpacing: '-0.03em',
+              lineHeight: 1.1,
+              letterSpacing: '-0.035em',
               color: 'var(--text-primary)',
-              maxWidth: '900px',
-              margin: '0 auto 1rem',
+              maxWidth: '860px',
+              margin: '0 auto 1.25rem',
             }}
           >
-            Inspect, Trace & Master{' '}
+            See memory allocation,{' '}
             <span 
               style={{
                 background: 'linear-gradient(135deg, var(--mem-allocated), var(--mem-free))',
@@ -89,28 +115,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Dynamic Memory Management
+              block by block.
             </span>
           </h1>
 
+          {/* Supporting Statement */}
           <p 
             style={{
-              fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
+              fontSize: 'clamp(1rem, 1.8vw, 1.1875rem)',
               color: 'var(--text-secondary)',
-              maxWidth: '680px',
-              margin: '0 auto 1.75rem',
-              lineHeight: 1.6,
+              maxWidth: '720px',
+              margin: '0 auto 2rem',
+              lineHeight: 1.65,
             }}
           >
-            A high-precision educational instrument simulating how dynamic memory allocators manage blocks using linked lists. Watch First Fit pointer traversal, block splitting, and adjacent coalescing in real time.
+            A high-precision educational instrument simulating how dynamic memory allocators manage blocks using linked lists. Watch First Fit pointer traversal, real-time block splitting, adjacent coalescing, and external fragmentation simulated over a custom memory arena.
           </p>
 
-          {/* Hero Action Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '2.5rem' }}>
+          {/* Primary CTAs */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '0.875rem' }}>
             <button 
               onClick={() => onNavigate('playground')}
               className="btn btn-primary"
-              style={{ padding: '0.75rem 1.5rem', fontSize: '0.9375rem' }}
+              style={{ padding: '0.8rem 1.625rem', fontSize: '0.9375rem' }}
             >
               <Play size={16} />
               <span>Open Memory Playground</span>
@@ -118,7 +145,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button 
               onClick={() => onNavigate('linked-list')}
               className="btn btn-secondary"
-              style={{ padding: '0.75rem 1.5rem', fontSize: '0.9375rem' }}
+              style={{ padding: '0.8rem 1.625rem', fontSize: '0.9375rem' }}
             >
               <Cpu size={16} />
               <span>Explore Linked List</span>
@@ -126,7 +153,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button 
               onClick={() => onNavigate('learn')}
               className="btn btn-secondary"
-              style={{ padding: '0.75rem 1.5rem', fontSize: '0.9375rem' }}
+              style={{ padding: '0.8rem 1.625rem', fontSize: '0.9375rem' }}
             >
               <BookOpen size={16} />
               <span>How Memory Works</span>
@@ -136,7 +163,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* 3D Visualizer Centerpiece */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 ✦ 3D Memory Bus Arena
@@ -146,11 +173,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </span>
             </div>
             <span style={{ fontSize: '0.6875rem', fontFamily: 'JetBrains Mono', color: 'var(--text-muted)' }}>
-              Hover blocks to elevate in 3D
+              Mouse parallax enabled · Hover blocks to elevate in 3D
             </span>
           </div>
 
-          <MemoryScene3D blocks={engineState.blocks} stats={engineState.stats} height={340} />
+          <MemoryScene3D blocks={engineState.blocks} stats={engineState.stats} height={350} />
         </div>
 
         {/* Live Quick Trial Strip inside Hero */}
@@ -169,16 +196,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Zap size={16} style={{ color: 'var(--mem-split)' }} />
             <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-              Quick Live Trial:
+              Live Allocator Trial:
             </span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              {quickTrialStatus || 'Click to test instant allocation on the running C++ engine:'}
+              {quickTrialStatus || 'Click to test instant First Fit allocation against the running C++ engine:'}
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <button 
               onClick={() => runHeroTrial(30)} 
+              disabled={isAllocating}
               className="btn btn-secondary" 
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', fontFamily: 'JetBrains Mono' }}
             >
@@ -186,6 +214,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </button>
             <button 
               onClick={() => runHeroTrial(25)} 
+              disabled={isAllocating}
               className="btn btn-secondary" 
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', fontFamily: 'JetBrains Mono' }}
             >
@@ -193,6 +222,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </button>
             <button 
               onClick={runHeroReset} 
+              disabled={isAllocating}
               className="btn btn-secondary" 
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
               title="Reset pool"
@@ -207,7 +237,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <MetricsGrid stats={engineState.stats} />
       </section>
 
-      {/* 2D Memory Visualizer Preview Section */}
+      {/* 2. Interactive Scroll-Driven Storytelling Section */}
+      <section className="container">
+        <AllocatorStoryline />
+      </section>
+
+      {/* 3. 2D Memory Visualizer Preview Section */}
       <section className="container">
         <div style={{ marginBottom: '1rem' }}>
           <h2 style={{ fontSize: '1.375rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
@@ -220,11 +255,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <MemoryVisualizer2D blocks={engineState.blocks} stats={engineState.stats} />
       </section>
 
-      {/* 4 Core Algorithmic Pillars */}
+      {/* 4. Core Algorithmic Pillars */}
       <section className="container">
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.625rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
-            Core Memory Management Concepts
+            Core Memory Management Pillars
           </h2>
           <p style={{ color: 'var(--text-secondary)', maxWidth: '580px', margin: '0 auto', fontSize: '0.875rem' }}>
             Essential data structure mechanics implemented in C++ and visualized transparently.
@@ -286,46 +321,42 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* Backend Integration Ground Truth Section */}
+      {/* 5. End-to-End System Architecture */}
       <section className="container">
+        <ArchitectureFlow />
+      </section>
+
+      {/* 6. Final Call to Action */}
+      <section className="container" style={{ marginBottom: '2rem' }}>
         <div 
           className="instrument-card"
           style={{
-            padding: '1.75rem',
+            padding: '2.5rem',
+            textAlign: 'center',
             display: 'flex',
-            flexWrap: 'wrap',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1.5rem',
+            gap: '1rem',
+            background: 'linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-elevated) 100%)',
           }}
         >
-          <div style={{ maxWidth: '640px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-              <ShieldCheck size={18} style={{ color: 'var(--mem-allocated)' }} />
-              <h3 style={{ fontSize: '1.1875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                Real C++ Engine Ground Truth
-              </h3>
-            </div>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-              HeapLens does not simulate memory in JavaScript. Every allocation, split, free, and coalescing operation runs in the compiled <strong>C++17 engine</strong> (<code>build/heaplens_engine.exe</code>) and streams over a bidirectional JSON-lines protocol.
-            </p>
+          <div style={{ display: 'inline-flex', padding: '0.5rem', borderRadius: '50%', background: 'var(--mem-allocated-bg)', color: 'var(--mem-allocated)', border: '1px solid var(--mem-allocated-border)' }}>
+            <Box size={24} />
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            <div style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono', color: 'var(--text-muted)' }}>
-              Engine Status: <span style={{ color: isEngineConnected ? 'var(--mem-allocated)' : 'var(--mem-fragmented)', fontWeight: 600 }}>
-                {isEngineConnected ? '● C++ Process Active' : '▲ Local Preview Mode'}
-              </span>
-            </div>
-            <button 
-              onClick={() => onNavigate('playground')} 
-              className="btn btn-primary"
-              style={{ padding: '0.5625rem 1.125rem' }}
-            >
-              <span>Launch Playground</span>
-              <ArrowRight size={15} />
-            </button>
-          </div>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+            Ready to Explore Memory Management in Action?
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '560px', fontSize: '0.9375rem', lineHeight: 1.6 }}>
+            Launch the interactive Memory Playground to submit allocation requests, watch the First Fit trace player step through memory blocks, and inspect coalescing events.
+          </p>
+          <button 
+            onClick={() => onNavigate('playground')} 
+            className="btn btn-primary"
+            style={{ padding: '0.75rem 1.75rem', fontSize: '0.9375rem', marginTop: '0.5rem' }}
+          >
+            <span>Launch Interactive Playground</span>
+            <ArrowRight size={16} />
+          </button>
         </div>
       </section>
     </div>
