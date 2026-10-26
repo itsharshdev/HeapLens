@@ -6,12 +6,30 @@
   "scripts": {
     "build:cpp": "g++ -std=c++17 -Wall -Wextra src/allocator.cpp src/main.cpp -o build/heaplens_engine.exe",
     "build:test": "g++ -std=c++17 -Wall -Wextra src/allocator.cpp tests/test_allocator.cpp -o build/test_allocator.exe",
-    "build": "npm run build:cpp && npm run build:test",
+    "build": "npm run build:cpp && npm run build:test && vite build",
     "test:cpp": ".\\build\\test_allocator.exe",
     "test:integration": "node tests/test_integration.js",
-    "test": "npm run build && npm run test:cpp && npm run test:integration",
+    "test": "npm run build:cpp && npm run build:test && npm run test:cpp && npm run test:integration",
     "start": "node bridge/server.js",
+    "dev": "vite",
+    "preview": "vite preview",
     "repl": ".\\build\\heaplens_engine.exe --interactive"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.160.0",
+    "lucide-react": "^0.344.0",
+    "canvas-confetti": "^1.9.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.160.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
   },
   "keywords": [
     "memory-allocator",

@@ -1,0 +1,304 @@
+/* ==========================================================================
+   HeapLens Core Design System & CSS Token Architecture
+   ========================================================================== */
+
+:root,
+html.theme-dark {
+  /* Primitive Palette */
+  --color-canvas: #070a11;
+  --color-canvas-subtle: #0b1120;
+  --color-surface: #0f172a;
+  --color-surface-hover: #17233d;
+  --color-surface-elevated: #1e293b;
+  --color-border: #1e293b;
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-focus: #10b981;
+
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #070a11;
+
+  /* Allocator Memory Semantics */
+  --mem-free: #06b6d4;
+  --mem-free-bg: rgba(6, 182, 212, 0.12);
+  --mem-free-border: rgba(6, 182, 212, 0.4);
+  --mem-allocated: #10b981;
+  --mem-allocated-bg: rgba(16, 185, 129, 0.18);
+  --mem-allocated-border: rgba(16, 185, 129, 0.5);
+  --mem-split: #eab308;
+  --mem-split-bg: rgba(234, 179, 8, 0.16);
+  --mem-coalesce: #a855f7;
+  --mem-fragmented: #f59e0b;
+  --mem-error: #f43f5e;
+  --mem-error-bg: rgba(244, 63, 94, 0.15);
+
+  /* Glow and Shadows */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --shadow-glow-emerald: 0 0 25px rgba(16, 185, 129, 0.25);
+  --shadow-glow-cyan: 0 0 25px rgba(6, 182, 212, 0.25);
+  --glass-bg: rgba(15, 23, 42, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  --grid-line: rgba(255, 255, 255, 0.03);
+}
+
+/* Light Mode: Clean Precision Laboratory */
+html.theme-light {
+  --color-canvas: #f8fafc;
+  --color-canvas-subtle: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+  --color-surface-elevated: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #cbd5e1;
+  --color-border-focus: #059669;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  --mem-free: #0284c7;
+  --mem-free-bg: rgba(2, 132, 199, 0.1);
+  --mem-free-border: rgba(2, 132, 199, 0.4);
+  --mem-allocated: #059669;
+  --mem-allocated-bg: rgba(5, 150, 105, 0.12);
+  --mem-allocated-border: rgba(5, 150, 105, 0.45);
+  --mem-split: #d97706;
+  --mem-split-bg: rgba(217, 119, 6, 0.12);
+  --mem-coalesce: #9333ea;
+  --mem-fragmented: #d97706;
+  --mem-error: #e11d48;
+  --mem-error-bg: rgba(225, 29, 72, 0.1);
+
+  --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.08);
+  --shadow-glow-emerald: 0 0 20px rgba(5, 150, 105, 0.15);
+  --shadow-glow-cyan: 0 0 20px rgba(2, 132, 199, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(15, 23, 42, 0.08);
+
+  --grid-line: rgba(15, 23, 42, 0.035);
+}
+
+/* HeapLens Lab: Retro-Phosphor Cyber Instrument */
+html.theme-lab {
+  --color-canvas: #040806;
+  --color-canvas-subtle: #08120b;
+  --color-surface: #0a170e;
+  --color-surface-hover: #102417;
+  --color-surface-elevated: #132e1f;
+  --color-border: #132e1f;
+  --color-border-subtle: rgba(52, 211, 153, 0.15);
+  --color-border-focus: #34d399;
+
+  --text-primary: #34d399;
+  --text-secondary: #10b981;
+  --text-muted: #059669;
+  --text-inverse: #040806;
+
+  --mem-free: #38bdf8;
+  --mem-free-bg: rgba(56, 189, 248, 0.12);
+  --mem-free-border: rgba(56, 189, 248, 0.5);
+  --mem-allocated: #34d399;
+  --mem-allocated-bg: rgba(52, 211, 153, 0.22);
+  --mem-allocated-border: #34d399;
+  --mem-split: #fbbf24;
+  --mem-split-bg: rgba(251, 191, 36, 0.18);
+  --mem-coalesce: #c084fc;
+  --mem-fragmented: #fbbf24;
+  --mem-error: #fb7185;
+  --mem-error-bg: rgba(251, 113, 133, 0.2);
+
+  --shadow-card: 0 0 24px -4px rgba(52, 211, 153, 0.15);
+  --shadow-glow-emerald: 0 0 30px rgba(52, 211, 153, 0.35);
+  --shadow-glow-cyan: 0 0 30px rgba(56, 189, 248, 0.35);
+  --glass-bg: rgba(10, 23, 14, 0.85);
+  --glass-border: rgba(52, 211, 153, 0.25);
+
+  --grid-line: rgba(52, 211, 153, 0.05);
+}
+
+/* ==========================================================================
+   Base Styles & Reset
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  background-image: 
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Accessible visible focus */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-focus);
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0.75rem;
+}
+
+/* Button System */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  border: 1px solid transparent;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: var(--mem-allocated);
+  color: var(--text-inverse);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+}
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow-emerald);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--text-primary);
+  border-color: var(--color-border);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-subtle);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: var(--mem-error);
+  color: #ffffff;
+}
+.btn-danger:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Badge System */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.02em;
+}
+
+.badge-free {
+  background: var(--mem-free-bg);
+  color: var(--mem-free);
+  border: 1px solid var(--mem-free-border);
+}
+
+.badge-allocated {
+  background: var(--mem-allocated-bg);
+  color: var(--mem-allocated);
+  border: 1px solid var(--mem-allocated-border);
+}
+
+.badge-warning {
+  background: var(--mem-split-bg);
+  color: var(--mem-fragmented);
+  border: 1px solid var(--mem-split);
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 10px var(--mem-allocated)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 22px var(--mem-allocated)); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

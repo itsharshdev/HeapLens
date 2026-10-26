@@ -2,10 +2,13 @@
 build/*.exe
 build/*.o
 build/*.obj
+dist/
 
 # Dependencies
 node_modules/
 npm-debug.log*
+__pycache__/
+*.pyc
 
 # Environment & OS
 .env
