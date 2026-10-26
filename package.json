@@ -1,0 +1,26 @@
+{
+  "name": "heaplens",
+  "version": "1.0.0",
+  "description": "HeapLens - Simplified Dynamic Memory Allocator using Linked Lists with Interactive Visualizer",
+  "main": "bridge/server.js",
+  "scripts": {
+    "build:cpp": "g++ -std=c++17 -Wall -Wextra src/allocator.cpp src/main.cpp -o build/heaplens_engine.exe",
+    "build:test": "g++ -std=c++17 -Wall -Wextra src/allocator.cpp tests/test_allocator.cpp -o build/test_allocator.exe",
+    "build": "npm run build:cpp && npm run build:test",
+    "test:cpp": ".\\build\\test_allocator.exe",
+    "test:integration": "node tests/test_integration.js",
+    "test": "npm run build && npm run test:cpp && npm run test:integration",
+    "start": "node bridge/server.js",
+    "repl": ".\\build\\heaplens_engine.exe --interactive"
+  },
+  "keywords": [
+    "memory-allocator",
+    "data-structures",
+    "linked-list",
+    "first-fit",
+    "coalescing",
+    "educational"
+  ],
+  "author": "HeapLens Team",
+  "license": "MIT"
+}

@@ -1,0 +1,13 @@
+# Build outputs
+build/*.exe
+build/*.o
+build/*.obj
+
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Environment & OS
+.env
+.DS_Store
+Thumbs.db
