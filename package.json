@@ -13,6 +13,7 @@
     "test": "npm run build:cpp && npm run build:test && npm run test:cpp && npm run test:integration",
     "start": "node bridge/server.js",
     "dev": "vite",
+    "dev:all": "node scripts/dev_all.js",
     "preview": "vite preview",
     "repl": ".\\build\\heaplens_engine.exe --interactive"
   },

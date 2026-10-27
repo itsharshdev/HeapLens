@@ -17,7 +17,7 @@ export default defineConfig({
   server: {
     port: 5173,
     watch: {
-      ignored: ['**/public/videos/**', '**/screenshots/**'],
+      ignored: ['**/public/**', '**/screenshots/**', '**/.git/**', '**/build/**'],
     },
     proxy: {
       '/api': {
