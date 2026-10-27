@@ -12,6 +12,7 @@ import {
   AlertTriangle 
 } from 'lucide-react';
 import { StrategyComparator } from '../components/StrategyComparator';
+import { CppImplementationGuide } from '../components/CppImplementationGuide';
 
 interface ConceptQuestion {
   question: string;
@@ -155,6 +156,9 @@ export const LearnPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* C++ Allocator Engine Implementation */}
+      <CppImplementationGuide />
 
       {/* Allocation Strategy Comparison Model */}
       <StrategyComparator />
