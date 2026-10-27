@@ -8,9 +8,15 @@
 
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 const readline = require('readline');
 
-const ENGINE_PATH = path.join(__dirname, '..', 'build', 'heaplens_engine.exe');
+const defaultBinaryName = process.platform === 'win32' ? 'heaplens_engine.exe' : 'heaplens_engine';
+const ENGINE_PATH = process.env.HEAPLENS_ENGINE_PATH || (
+    fs.existsSync(path.join(__dirname, '..', 'build', defaultBinaryName))
+        ? path.join(__dirname, '..', 'build', defaultBinaryName)
+        : path.join(__dirname, '..', 'build', 'heaplens_engine.exe')
+);
 
 let testsPassed = 0;
 let testsFailed = 0;

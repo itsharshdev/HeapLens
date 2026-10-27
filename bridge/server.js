@@ -10,10 +10,34 @@
 const http = require('http');
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 const readline = require('readline');
 
 const PORT = process.env.PORT || 3001;
-const ENGINE_PATH = process.env.HEAPLENS_ENGINE_PATH || path.join(__dirname, '..', 'build', 'heaplens_engine.exe');
+const defaultBinaryName = process.platform === 'win32' ? 'heaplens_engine.exe' : 'heaplens_engine';
+const ENGINE_PATH = process.env.HEAPLENS_ENGINE_PATH || (
+    fs.existsSync(path.join(__dirname, '..', 'build', defaultBinaryName))
+        ? path.join(__dirname, '..', 'build', defaultBinaryName)
+        : path.join(__dirname, '..', 'build', 'heaplens_engine.exe')
+);
+const DIST_DIR = path.join(__dirname, '..', 'dist');
+
+const MIME_TYPES = {
+    '.html': 'text/html; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.mp4': 'video/mp4',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon',
+    '.woff2': 'font/woff2',
+    '.woff': 'font/woff',
+    '.ttf': 'font/ttf',
+};
 
 let engineProcess = null;
 let engineLineReader = null;
@@ -161,6 +185,25 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(engineRes));
             return;
+        }
+
+        // Serve production static assets from dist/ if available
+        if (req.method === 'GET' && !pathname.startsWith('/api') && fs.existsSync(DIST_DIR)) {
+            let relativePath = pathname === '/' ? 'index.html' : pathname.replace(/^\//, '');
+            let filePath = path.join(DIST_DIR, relativePath);
+
+            // If not found or a directory, fallback to index.html for SPA hash routing
+            if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+                filePath = path.join(DIST_DIR, 'index.html');
+            }
+
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+                const ext = path.extname(filePath).toLowerCase();
+                const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+                res.writeHead(200, { 'Content-Type': contentType });
+                fs.createReadStream(filePath).pipe(res);
+                return;
+            }
         }
 
         res.writeHead(404, { 'Content-Type': 'application/json' });
