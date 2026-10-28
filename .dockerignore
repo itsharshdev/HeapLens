@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.git/
+screenshots/
+.env
+*.exe
+*.o
+*.obj
+*.log
+.DS_Store
+Thumbs.db

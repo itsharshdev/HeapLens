@@ -29,6 +29,7 @@ const fs = require('fs');
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const SCREENSHOT_DIR = path.join(__dirname, '..', 'screenshots');
+const BASE_URL = process.env.APP_URL || 'http://localhost:3001';
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
@@ -66,7 +67,7 @@ async function runPhase4QA() {
 
   // 1. Landing Page Hero & Storyline
   process.stdout.write('  * [1/11] Landing Page Hero & 3D Bus Arena...');
-  await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1000); // Three.js initial render
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_desktop_hero.png') });
   console.log(' [PASS] -> screenshots/01_desktop_hero.png');
@@ -93,7 +94,7 @@ async function runPhase4QA() {
 
   // 2. Playground - Guided Scenarios & TracePlayer
   process.stdout.write('  * [4/11] Playground: Scenario 1 (Block Splitting)...');
-  await page.goto('http://localhost:5173/#/playground', { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/#/playground`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
   const scenario1 = await page.$('button:has-text("1. Block Splitting")');
   if (scenario1) {
@@ -131,21 +132,21 @@ async function runPhase4QA() {
 
   // 3. Dashboard Route
   process.stdout.write('  * [7/11] Dashboard (/#/dashboard)...');
-  await page.goto('http://localhost:5173/#/dashboard', { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/#/dashboard`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_desktop_dashboard.png') });
   console.log(' [PASS] -> screenshots/07_desktop_dashboard.png');
 
   // 4. Linked-List Explorer Route
   process.stdout.write('  * [8/11] Linked-List Explorer (/#/linked-list)...');
-  await page.goto('http://localhost:5173/#/linked-list', { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/#/linked-list`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '08_desktop_linked_list.png') });
   console.log(' [PASS] -> screenshots/08_desktop_linked_list.png');
 
   // 5. How Memory Works Guide & Strategy Comparator
   process.stdout.write('  * [9/11] How Memory Works Guide & Strategy Comparator (/#/learn)...');
-  await page.goto('http://localhost:5173/#/learn', { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/#/learn`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
   const preset35 = await page.$('button:has-text("35u")');
   if (preset35) {
@@ -185,7 +186,7 @@ async function runPhase4QA() {
     deviceScaleFactor: 1,
   });
   const tabletPage = await tabletContext.newPage();
-  await tabletPage.goto('http://localhost:5173/#/playground', { waitUntil: 'networkidle' });
+  await tabletPage.goto(`${BASE_URL}/#/playground`, { waitUntil: 'networkidle' });
   await tabletPage.waitForTimeout(800);
   await tabletPage.screenshot({ path: path.join(SCREENSHOT_DIR, '12_tablet_playground.png') });
   console.log('  * [PASS] -> screenshots/12_tablet_playground.png');
@@ -202,7 +203,7 @@ async function runPhase4QA() {
   });
 
   const mobilePage = await mobileContext.newPage();
-  await mobilePage.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+  await mobilePage.goto(`${BASE_URL}/`, { waitUntil: 'networkidle' });
   await mobilePage.waitForTimeout(800);
   await mobilePage.screenshot({ path: path.join(SCREENSHOT_DIR, '13_mobile_landing.png') });
   console.log('  * Mobile Landing Page... [PASS] -> screenshots/13_mobile_landing.png');

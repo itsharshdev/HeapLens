@@ -14,6 +14,7 @@ const fs = require('fs');
 const readline = require('readline');
 
 const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST || '0.0.0.0';
 const defaultBinaryName = process.platform === 'win32' ? 'heaplens_engine.exe' : 'heaplens_engine';
 const ENGINE_PATH = process.env.HEAPLENS_ENGINE_PATH || (
     fs.existsSync(path.join(__dirname, '..', 'build', defaultBinaryName))
@@ -147,9 +148,9 @@ const server = http.createServer(async (req, res) => {
 
     try {
         if (req.method === 'GET' && pathname === '/api/health') {
-            const isAlive = engineProcess !== null && !engineProcess.killed;
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ status: 'ok', bridge: true, engineAlive: isAlive }));
+            const isAlive = engineProcess !== null && !engineProcess.killed && engineProcess.exitCode === null;
+            res.writeHead(isAlive ? 200 : 503, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: isAlive ? 'ok' : 'degraded', bridge: true, engineAlive: isAlive }));
             return;
         }
 
@@ -218,8 +219,8 @@ const server = http.createServer(async (req, res) => {
 if (require.main === module) {
     initEngine()
         .then(() => {
-            server.listen(PORT, () => {
-                console.log(`[Bridge] HeapLens API Bridge listening on http://localhost:${PORT}`);
+            server.listen(PORT, HOST, () => {
+                console.log(`[Bridge] HeapLens API Bridge listening on http://${HOST}:${PORT}`);
             });
         })
         .catch((err) => {
