@@ -21,6 +21,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Copy full application source files
+COPY bridge/ ./bridge/
 COPY src/ ./src/
 COPY src-ui/ ./src-ui/
 COPY public/ ./public/
